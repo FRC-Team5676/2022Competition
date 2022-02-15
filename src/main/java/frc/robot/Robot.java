@@ -64,8 +64,8 @@ public class Robot extends TimedRobot {
   private static WPI_TalonSRX leftWench = new WPI_TalonSRX(31);
 
   //Joysticks
-  private static Joystick controller_0 = new Joystick(0);
-  private static Joystick controller_1 = new Joystick(1);
+  private static XboxController ctl1 = new XboxController(0);
+  private static XboxController ctl2 = new XboxController(1);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -154,7 +154,29 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+
+    //Intake Balls
+    if (ctl1.ButtonA() || ctl2.ButtonA()) {
+
+    }
+
+    //Shoot High
+    if (ctl1.ButtonY() || ctl2.ButtonY()) {
+
+    }
+
+    //Shoot Low
+    if (ctl1.ButtonB() || ctl2.ButtonB()) {
+
+    }
+
+    //Climb
+    if (ctl1.ButtonStart() || ctl2.ButtonStart()) {
+
+    }
+
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
