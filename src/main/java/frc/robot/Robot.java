@@ -63,6 +63,11 @@ public class Robot extends TimedRobot {
   private static WPI_TalonSRX rightWench = new WPI_TalonSRX(30);
   private static WPI_TalonSRX leftWench = new WPI_TalonSRX(31);
 
+  //Spark drives
+  private static Spark armRotate = new Spark(0);
+  private static Spark upperIntake = new Spark(1);
+  private static Spark lowerIntake = new Spark(2);
+
   //Joysticks
   private static XboxController ctl1 = new XboxController(0);
   private static XboxController ctl2 = new XboxController(1);
@@ -166,17 +171,24 @@ public class Robot extends TimedRobot {
     Boolean buttonA = ctl1.ButtonA() || ctl2.ButtonA();
     intakeExtension.Extend(buttonA);
     if (buttonA) {
-      upperIntake.
+      upperIntake.set(0.30);
+      lowerIntake.set(0.85);
     }
 
     //Shoot High
-    if (ctl1.ButtonY() || ctl2.ButtonY()) {
-
+    Boolean buttonY = ctl1.ButtonY() || ctl2.ButtonY();
+    if (buttonY) {
+      intakeExtension.Extend(false);
+      upperIntake.set(-0.30);
+      lowerIntake.set(0.85);
     }
 
     //Shoot Low
-    if (ctl1.ButtonB() || ctl2.ButtonB()) {
-
+    Boolean buttonB = ctl1.ButtonB() || ctl2.ButtonB();
+    if (buttonB) {
+      intakeExtension.Extend(false);
+      upperIntake.set(-0.50);
+      lowerIntake.set(0.85);
     }
 
     //Climb
