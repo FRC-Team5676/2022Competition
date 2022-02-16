@@ -9,17 +9,23 @@ public class AirCylinder {
     final int delay = 250;
     private long lastTime;
     private static DoubleSolenoid valve;
-    private Value value;
 
     public AirCylinder(int moduleNumber, int forwardChannel, int reverseChannel, PneumaticsModuleType moduleType) {
         valve = new DoubleSolenoid(moduleNumber, moduleType, forwardChannel, reverseChannel);
-        value = valve.get();
     }
 
-    public void Extend(bool extend) {
+    public void Extend(Boolean extend) {
         if (System.currentTimeMillis() - lastTime > delay) {
-            value = valve.get();
+            if (extend) {
+                valve.set(DoubleSolenoid.Value.kForward);
+            } else {
+                valve.set(DoubleSolenoid.Value.kReverse);
+            }
+            lastTime = System.currentTimeMillis();
         }
-        valve.set(DoubleSolenoid.Value.kForward);
+    }
+
+    public Value Get() {
+        return valve.get();
     }
 }

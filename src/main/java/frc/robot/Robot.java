@@ -48,24 +48,30 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   
-  //Drive callbacks
+  //Drivetrain drives
   private static WPI_TalonSRX driveRF = new WPI_TalonSRX(10); 
   private static WPI_TalonSRX driveLF = new WPI_TalonSRX(11); 
   private static WPI_TalonSRX driveRR = new WPI_TalonSRX(12);
   private static WPI_TalonSRX driveLR = new WPI_TalonSRX(13);
   private static DifferentialDrive robot = new DifferentialDrive(driveLF, driveRF);
 
-  //Screw callbacks
+  //Screw drives
   private static WPI_TalonSRX rightScrew = new WPI_TalonSRX(20);
   private static WPI_TalonSRX leftScrew = new WPI_TalonSRX(21);
 
-  //Wench callbacks
+  //Wench drives
   private static WPI_TalonSRX rightWench = new WPI_TalonSRX(30);
   private static WPI_TalonSRX leftWench = new WPI_TalonSRX(31);
 
   //Joysticks
   private static XboxController ctl1 = new XboxController(0);
   private static XboxController ctl2 = new XboxController(1);
+
+  //Pneumatics
+  private static AirCylinder outerClamps = new AirCylinder(0, 1, 2, PneumaticsModuleType.CTREPCM);
+  private static AirCylinder innerClamps = new AirCylinder(0, 3, 4, PneumaticsModuleType.CTREPCM);
+  private static AirCylinder intakeExtension = new AirCylinder(0, 5, 6, PneumaticsModuleType.CTREPCM);
+  private static AirCylinder rampLift = new AirCylinder(0, 7, 8, PneumaticsModuleType.CTREPCM);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -157,8 +163,10 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     //Intake Balls
-    if (ctl1.ButtonA() || ctl2.ButtonA()) {
-
+    Boolean buttonA = ctl1.ButtonA() || ctl2.ButtonA();
+    intakeExtension.Extend(buttonA);
+    if (buttonA) {
+      upperIntake.
     }
 
     //Shoot High
@@ -174,6 +182,14 @@ public class Robot extends TimedRobot {
     //Climb
     if (ctl1.ButtonStart() || ctl2.ButtonStart()) {
 
+    }
+
+    //Drive
+    if (ctl1.LeftStickY() != 0 || ctl1.LeftStickX() != 0) {
+      robot.arcadeDrive(ctl1.LeftStickY(), ctl1.LeftStickX());
+    }
+    if (ctl2.LeftStickY() != 0 || ctl2.LeftStickX() != 0) {
+      robot.arcadeDrive(ctl2.LeftStickY(), ctl2.LeftStickX());
     }
 
   }
