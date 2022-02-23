@@ -9,7 +9,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 //Imports for Motor Control
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
+
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 import javax.lang.model.element.VariableElement;
@@ -18,14 +22,13 @@ import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.InvertType;
 
 //For Controller (physical, this is not the motor controllers.)
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.AnalogInput;
 
 //For Drive
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-
+import edu.wpi.first.wpilibj.drive.RobotDriveBase.MotorType;
 //For Pneumatics
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -49,32 +52,28 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   
   //Drivetrain drives
-  private static WPI_TalonSRX driveRF = new WPI_TalonSRX(10); 
-  private static WPI_TalonSRX driveLF = new WPI_TalonSRX(11); 
-  private static WPI_TalonSRX driveRR = new WPI_TalonSRX(12);
-  private static WPI_TalonSRX driveLR = new WPI_TalonSRX(13);
+  private static CANSparkMax driveRF = new CANSparkMax(10, CANSparkMaxLowLevel.MotorType.kBrushless); 
+  private static CANSparkMax driveLF = new CANSparkMax(11, CANSparkMaxLowLevel.MotorType.kBrushless); 
+  private static CANSparkMax driveRR = new CANSparkMax(12, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private static CANSparkMax driveLR = new CANSparkMax(13, CANSparkMaxLowLevel.MotorType.kBrushless);
   private static DifferentialDrive robot = new DifferentialDrive(driveLF, driveRF);
 
-  //Screw drives
-  private static WPI_TalonSRX rightScrew = new WPI_TalonSRX(20);
-  private static WPI_TalonSRX leftScrew = new WPI_TalonSRX(21);
-
-  //Wench drives
-  private static WPI_TalonSRX rightWench = new WPI_TalonSRX(30);
-  private static WPI_TalonSRX leftWench = new WPI_TalonSRX(31);
+  //Climbing drives
+  private static WPI_TalonSRX rightArmScrew = new WPI_TalonSRX(20);
+  private static WPI_TalonSRX leftArmScrew = new WPI_TalonSRX(21);
+  private static WPI_TalonSRX rightLiftScrew = new WPI_TalonSRX(22);
+  private static WPI_TalonSRX leftLiftScrew = new WPI_TalonSRX(23);
+  private static WPI_TalonSRX armRotate = new WPI_TalonSRX(24);
 
   //Spark drives
-  private static Spark armRotate = new Spark(0);
-  private static Spark upperIntake = new Spark(1);
-  private static Spark lowerIntake = new Spark(2);
+  private static PWMVictorSPX upperIntake = new PWMVictorSPX(0);
+  private static PWMVictorSPX lowerIntake = new PWMVictorSPX(1);
 
   //Joysticks
   private static XboxController ctl1 = new XboxController(0);
   private static XboxController ctl2 = new XboxController(1);
 
   //Pneumatics
-  private static AirCylinder outerClamps = new AirCylinder(0, 1, 2, PneumaticsModuleType.CTREPCM);
-  private static AirCylinder innerClamps = new AirCylinder(0, 3, 4, PneumaticsModuleType.CTREPCM);
   private static AirCylinder intakeExtension = new AirCylinder(0, 5, 6, PneumaticsModuleType.CTREPCM);
   private static AirCylinder rampLift = new AirCylinder(0, 7, 8, PneumaticsModuleType.CTREPCM);
 
@@ -92,15 +91,11 @@ public class Robot extends TimedRobot {
   CameraServer.startAutomaticCapture(0);
   CameraServer.startAutomaticCapture(1);
 
-  //Factory default all drives
-  driveRF.configFactoryDefault();
-  driveLF.configFactoryDefault();
-  driveLR.configFactoryDefault();
-  driveRR.configFactoryDefault();
-  rightScrew.configFactoryDefault();
-  leftScrew.configFactoryDefault();
-  rightWench.configFactoryDefault();
-  leftWench.configFactoryDefault();
+  //Factory default talon drives
+  rightArmScrew.configFactoryDefault();
+  leftArmScrew.configFactoryDefault();
+  rightLiftScrew.configFactoryDefault();
+  leftLiftScrew.configFactoryDefault();
 
   //setup followers
   driveRR.follow(driveRF);
@@ -109,13 +104,8 @@ public class Robot extends TimedRobot {
   //flip values so robot moves forwardard when stick-forwardard/green LEDS
   driveRF.setInverted(true);
   driveLF.setInverted(false);
-  driveRR.setInverted(InvertType.FollowMaster);
-  driveLR.setInverted(InvertType.FollowMaster);
-
-  //Sensor phasing
-  driveRF.setSensorPhase(true);
-  driveLF.setSensorPhase(true);
-
+  driveRR.setInverted(true);
+  driveLR.setInverted(false);
   }
 
   /**
@@ -195,6 +185,18 @@ public class Robot extends TimedRobot {
     if (ctl1.ButtonStart() || ctl2.ButtonStart()) {
 
     }
+
+    /* Climb Manual */
+    int reverse;
+    if (ctl1.ButtonX() || ctl2.ButtonX()) {
+      reverse = -1;
+    } else {
+      reverse = 1;
+    }
+    rightArmScrew.set(reverse * ctl1.LeftTrigger());
+    leftArmScrew.set(reverse * ctl1.LeftTrigger());
+    rightLiftScrew.set(reverse * ctl1.RightTrigger());
+    leftLiftScrew.set(reverse * ctl1.RightTrigger());
 
     //Drive
     if (ctl1.LeftStickY() != 0 || ctl1.LeftStickX() != 0) {
