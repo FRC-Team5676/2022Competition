@@ -77,8 +77,10 @@ public class Robot extends TimedRobot {
   private static XboxController ctl2 = new XboxController(1);
 
   // Pneumatics
-  private static AirCylinder intakeExtension = new AirCylinder(0, 5, 6, PneumaticsModuleType.CTREPCM);
-  private static AirCylinder rampLift = new AirCylinder(0, 7, 8, PneumaticsModuleType.CTREPCM);
+  // private static AirCylinder intakeExtension = new AirCylinder(0, 5, 6,
+  // PneumaticsModuleType.CTREPCM);
+  // private static AirCylinder rampLift = new AirCylinder(0, 7, 8,
+  // PneumaticsModuleType.CTREPCM);
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -102,14 +104,14 @@ public class Robot extends TimedRobot {
     leftLiftScrew.configFactoryDefault();
 
     // setup followers
-    driveRR.follow(driveRF);
-    driveLR.follow(driveLF);
+     driveRR.follow(driveRF);
+     driveLR.follow(driveLF);
 
     // flip values so robot moves forwardard when stick-forwardard/green LEDS
-    driveRF.setInverted(true);
-    driveLF.setInverted(false);
-    driveRR.setInverted(true);
-    driveLR.setInverted(false);
+     driveRF.setInverted(false);
+     driveLF.setInverted(true);
+     driveRR.setInverted(false);
+     driveLR.setInverted(true);
   }
 
   /**
@@ -176,7 +178,7 @@ public class Robot extends TimedRobot {
 
     // Intake Balls
     Boolean buttonA = ctl1.ButtonA() || ctl2.ButtonA();
-    intakeExtension.Extend(buttonA);
+    // intakeExtension.Extend(buttonA);
     if (buttonA) {
       upperIntake.set(0.30);
       lowerIntake.set(0.85);
@@ -185,7 +187,7 @@ public class Robot extends TimedRobot {
     // Shoot High
     Boolean buttonY = ctl1.ButtonY() || ctl2.ButtonY();
     if (buttonY) {
-      intakeExtension.Extend(false);
+      // intakeExtension.Extend(false);
       upperIntake.set(-0.30);
       lowerIntake.set(0.85);
     }
@@ -193,7 +195,7 @@ public class Robot extends TimedRobot {
     // Shoot Low
     Boolean buttonB = ctl1.ButtonB() || ctl2.ButtonB();
     if (buttonB) {
-      intakeExtension.Extend(false);
+      // intakeExtension.Extend(false);
       upperIntake.set(-0.50);
       lowerIntake.set(0.85);
     }
@@ -210,27 +212,38 @@ public class Robot extends TimedRobot {
     } else {
       reverse = 1;
     }
-    if (ctl1.BumperLeft() || ctl2.BumperLeft()) {
-      rightArmScrew.set(reverse * ctl1.LeftTrigger());
+    if (ctl1.BumperLeft() || ctl2.BumperLeft() || ctl1.BumperRight() || ctl2.BumperRight()) {
+      if (ctl1.BumperLeft() || ctl2.BumperLeft()) {
+        rightLiftScrew.set(reverse * ctl1.RightTrigger());
+        leftLiftScrew.set(reverse * ctl1.LeftTrigger());
+      }
+      if (ctl1.BumperRight() || ctl2.BumperRight()) {
+        rightArmScrew.set(reverse * ctl1.RightTrigger());
+        leftArmScrew.set(reverse * ctl1.LeftTrigger());
+      }
+    } else {
+      rightArmScrew.set(reverse * ctl1.RightTrigger());
       leftArmScrew.set(reverse * ctl1.RightTrigger());
-    } else {
-      rightArmScrew.set(reverse * ctl1.LeftTrigger());
-      leftArmScrew.set(reverse * ctl1.LeftTrigger());
-    }
-    if (ctl1.BumperLeft() || ctl2.BumperLeft()) {
-      rightLiftScrew.set(reverse * ctl1.RightTrigger());
+      rightLiftScrew.set(reverse * ctl1.LeftTrigger());
       leftLiftScrew.set(reverse * ctl1.LeftTrigger());
-    } else {
-      rightLiftScrew.set(reverse * ctl1.RightTrigger());
-      leftLiftScrew.set(reverse * ctl1.RightTrigger());
+    }
+
+    // Arm Rotate
+    if (ctl1.RightStickY() != 0) {
+      Double rotSpeed = ctl1.RightStickY();
+      armRotate.set(rotSpeed);
+    }
+    if (ctl2.RightStickY() != 0) {
+      Double rotSpeed = ctl2.RightStickY();
+      armRotate.set(rotSpeed);
     }
 
     // Drive
     if (ctl1.LeftStickY() != 0 || ctl1.LeftStickX() != 0) {
-      robot.arcadeDrive(ctl1.LeftStickY(), ctl1.LeftStickX());
+      robot.arcadeDrive(ctl1.LeftStickY(), -ctl1.LeftStickX());
     }
     if (ctl2.LeftStickY() != 0 || ctl2.LeftStickX() != 0) {
-      robot.arcadeDrive(ctl2.LeftStickY(), ctl2.LeftStickX());
+      robot.arcadeDrive(ctl2.LeftStickY(), -ctl2.LeftStickX());
     }
 
   }
