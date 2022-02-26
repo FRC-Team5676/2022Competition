@@ -40,9 +40,12 @@ import edu.wpi.first.cameraserver.CameraServer;
 //
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the
+ * name of this class or
+ * the package after creating this project, you must also update the
+ * build.gradle file in the
  * project.
  */
 public class Robot extends TimedRobot {
@@ -50,35 +53,36 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  
-  //Drivetrain drives
-  private static CANSparkMax driveRF = new CANSparkMax(10, CANSparkMaxLowLevel.MotorType.kBrushless); 
-  private static CANSparkMax driveLF = new CANSparkMax(11, CANSparkMaxLowLevel.MotorType.kBrushless); 
+
+  // Drivetrain drives
+  private static CANSparkMax driveRF = new CANSparkMax(10, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private static CANSparkMax driveLF = new CANSparkMax(11, CANSparkMaxLowLevel.MotorType.kBrushless);
   private static CANSparkMax driveRR = new CANSparkMax(12, CANSparkMaxLowLevel.MotorType.kBrushless);
   private static CANSparkMax driveLR = new CANSparkMax(13, CANSparkMaxLowLevel.MotorType.kBrushless);
   private static DifferentialDrive robot = new DifferentialDrive(driveLF, driveRF);
 
-  //Climbing drives
+  // Climbing drives
   private static WPI_TalonSRX rightArmScrew = new WPI_TalonSRX(20);
   private static WPI_TalonSRX leftArmScrew = new WPI_TalonSRX(21);
   private static WPI_TalonSRX rightLiftScrew = new WPI_TalonSRX(22);
   private static WPI_TalonSRX leftLiftScrew = new WPI_TalonSRX(23);
   private static WPI_TalonSRX armRotate = new WPI_TalonSRX(24);
 
-  //Spark drives
+  // Spark drives
   private static PWMVictorSPX upperIntake = new PWMVictorSPX(0);
   private static PWMVictorSPX lowerIntake = new PWMVictorSPX(1);
 
-  //Joysticks
+  // Joysticks
   private static XboxController ctl1 = new XboxController(0);
   private static XboxController ctl2 = new XboxController(1);
 
-  //Pneumatics
+  // Pneumatics
   private static AirCylinder intakeExtension = new AirCylinder(0, 5, 6, PneumaticsModuleType.CTREPCM);
   private static AirCylinder rampLift = new AirCylinder(0, 7, 8, PneumaticsModuleType.CTREPCM);
 
   /**
-   * This function is run when the robot is first started up and should be used for any
+   * This function is run when the robot is first started up and should be used
+   * for any
    * initialization code.
    */
   @Override
@@ -87,45 +91,57 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
-  //Chooser Setup
-  CameraServer.startAutomaticCapture(0);
-  CameraServer.startAutomaticCapture(1);
+    // Chooser Setup
+    CameraServer.startAutomaticCapture(0);
+    CameraServer.startAutomaticCapture(1);
 
-  //Factory default talon drives
-  rightArmScrew.configFactoryDefault();
-  leftArmScrew.configFactoryDefault();
-  rightLiftScrew.configFactoryDefault();
-  leftLiftScrew.configFactoryDefault();
+    // Factory default talon drives
+    rightArmScrew.configFactoryDefault();
+    leftArmScrew.configFactoryDefault();
+    rightLiftScrew.configFactoryDefault();
+    leftLiftScrew.configFactoryDefault();
 
-  //setup followers
-  driveRR.follow(driveRF);
-  driveLR.follow(driveLF);
+    // setup followers
+    driveRR.follow(driveRF);
+    driveLR.follow(driveLF);
 
-  //flip values so robot moves forwardard when stick-forwardard/green LEDS
-  driveRF.setInverted(true);
-  driveLF.setInverted(false);
-  driveRR.setInverted(true);
-  driveLR.setInverted(false);
+    // flip values so robot moves forwardard when stick-forwardard/green LEDS
+    driveRF.setInverted(true);
+    driveLF.setInverted(false);
+    driveRR.setInverted(true);
+    driveLR.setInverted(false);
   }
 
   /**
-   * This function is called every robot packet, no matter the mode. Use this for items like
-   * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
+   * This function is called every robot packet, no matter the mode. Use this for
+   * items like
+   * diagnostics that you want ran during disabled, autonomous, teleoperated and
+   * test.
    *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+   * <p>
+   * This runs after the mode specific periodic functions, but before LiveWindow
+   * and
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+  }
 
   /**
-   * This autonomous (along with the chooser code above) shows how to select between different
-   * autonomous modes using the dashboard. The sendable chooser code works with the Java
-   * SmartDashboard. If you prefer the LabVIEW Dashboard, remove all of the chooser code and
-   * uncomment the getString line to get the auto name from the text box below the Gyro
+   * This autonomous (along with the chooser code above) shows how to select
+   * between different
+   * autonomous modes using the dashboard. The sendable chooser code works with
+   * the Java
+   * SmartDashboard. If you prefer the LabVIEW Dashboard, remove all of the
+   * chooser code and
+   * uncomment the getString line to get the auto name from the text box below the
+   * Gyro
    *
-   * <p>You can add additional auto modes by adding additional comparisons to the switch structure
-   * below with additional strings. If using the SendableChooser make sure to add them to the
+   * <p>
+   * You can add additional auto modes by adding additional comparisons to the
+   * switch structure
+   * below with additional strings. If using the SendableChooser make sure to add
+   * them to the
    * chooser code above as well.
    */
   @Override
@@ -151,13 +167,14 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+  }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
 
-    //Intake Balls
+    // Intake Balls
     Boolean buttonA = ctl1.ButtonA() || ctl2.ButtonA();
     intakeExtension.Extend(buttonA);
     if (buttonA) {
@@ -165,7 +182,7 @@ public class Robot extends TimedRobot {
       lowerIntake.set(0.85);
     }
 
-    //Shoot High
+    // Shoot High
     Boolean buttonY = ctl1.ButtonY() || ctl2.ButtonY();
     if (buttonY) {
       intakeExtension.Extend(false);
@@ -173,7 +190,7 @@ public class Robot extends TimedRobot {
       lowerIntake.set(0.85);
     }
 
-    //Shoot Low
+    // Shoot Low
     Boolean buttonB = ctl1.ButtonB() || ctl2.ButtonB();
     if (buttonB) {
       intakeExtension.Extend(false);
@@ -181,7 +198,7 @@ public class Robot extends TimedRobot {
       lowerIntake.set(0.85);
     }
 
-    //Climb
+    // Climb
     if (ctl1.ButtonStart() || ctl2.ButtonStart()) {
 
     }
@@ -193,12 +210,22 @@ public class Robot extends TimedRobot {
     } else {
       reverse = 1;
     }
-    rightArmScrew.set(reverse * ctl1.LeftTrigger());
-    leftArmScrew.set(reverse * ctl1.LeftTrigger());
-    rightLiftScrew.set(reverse * ctl1.RightTrigger());
-    leftLiftScrew.set(reverse * ctl1.RightTrigger());
+    if (ctl1.BumperLeft() || ctl2.BumperLeft()) {
+      rightArmScrew.set(reverse * ctl1.LeftTrigger());
+      leftArmScrew.set(reverse * ctl1.RightTrigger());
+    } else {
+      rightArmScrew.set(reverse * ctl1.LeftTrigger());
+      leftArmScrew.set(reverse * ctl1.LeftTrigger());
+    }
+    if (ctl1.BumperLeft() || ctl2.BumperLeft()) {
+      rightLiftScrew.set(reverse * ctl1.RightTrigger());
+      leftLiftScrew.set(reverse * ctl1.LeftTrigger());
+    } else {
+      rightLiftScrew.set(reverse * ctl1.RightTrigger());
+      leftLiftScrew.set(reverse * ctl1.RightTrigger());
+    }
 
-    //Drive
+    // Drive
     if (ctl1.LeftStickY() != 0 || ctl1.LeftStickX() != 0) {
       robot.arcadeDrive(ctl1.LeftStickY(), ctl1.LeftStickX());
     }
@@ -210,17 +237,21 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+  }
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   /** This function is called once when test mode is enabled. */
   @Override
-  public void testInit() {}
+  public void testInit() {
+  }
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 }
