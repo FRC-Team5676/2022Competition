@@ -37,7 +37,8 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 //For Cams
 import edu.wpi.first.cameraserver.CameraServer;
 
-//
+//halo sensors (these tell the bot to stop climbing.)
+import edu.wpi.first.wpilibj.DigitalInput;
 
 /**
  * The VM is configured to automatically run this class, and to call the
