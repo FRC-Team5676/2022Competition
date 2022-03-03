@@ -8,8 +8,8 @@ public class MainLift {
 
     private DigitalInput _leftTopMax = new DigitalInput(2);
     private DigitalInput _leftBottomMax = new DigitalInput(3);
-    private DigitalInput _rightTopMax = new DigitalInput(4); // SET Channel
-    private DigitalInput _rightBottomMax = new DigitalInput(5); // SET Channel
+    private DigitalInput _rightTopMax = new DigitalInput(5);
+    private DigitalInput _rightBottomMax = new DigitalInput(7);
 
     private WPI_TalonSRX _rightMotor = new WPI_TalonSRX(22);
     private WPI_TalonSRX _leftMotor = new WPI_TalonSRX(23);
