@@ -100,13 +100,6 @@ public class Robot extends TimedRobot {
     // setup followers
     driveRR.follow(driveRF);
     driveLR.follow(driveLF);
-
-    // flip values so robot moves forwardard when stick-forwardard/green LEDS
-    driveRF.setInverted(true);
-    driveLF.setInverted(true);
-    driveRR.setInverted(true);
-    driveLR.setInverted(true);
-
   }
 
   /**
@@ -237,10 +230,10 @@ public class Robot extends TimedRobot {
 
     // Drive
     if (ctl1.LeftStickY() != 0 || ctl1.LeftStickX() != 0) {
-      robot.arcadeDrive(ctl1.LeftStickX(), ctl1.LeftStickY());
+      robot.arcadeDrive(ctl1.LeftStickX(), -ctl1.LeftStickY());
     }
     if (ctl2.LeftStickY() != 0 || ctl2.LeftStickX() != 0) {
-      robot.arcadeDrive(ctl2.LeftStickX(), ctl2.LeftStickY());
+      robot.arcadeDrive(ctl2.LeftStickX(), -ctl2.LeftStickY());
     }
 
   }
