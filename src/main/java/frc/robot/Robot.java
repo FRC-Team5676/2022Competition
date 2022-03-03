@@ -102,10 +102,10 @@ public class Robot extends TimedRobot {
     driveLR.follow(driveLF);
 
     // flip values so robot moves forwardard when stick-forwardard/green LEDS
-    driveRF.setInverted(false);
-    driveLF.setInverted(false);
-    driveRR.setInverted(false);
-    driveLR.setInverted(false);
+    driveRF.setInverted(true);
+    driveLF.setInverted(true);
+    driveRR.setInverted(true);
+    driveLR.setInverted(true);
 
   }
 
