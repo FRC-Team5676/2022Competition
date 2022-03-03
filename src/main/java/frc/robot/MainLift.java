@@ -6,18 +6,19 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
 public class MainLift {
 
-    private DigitalInput _leftTopMax = new DigitalInput(2);
-    private DigitalInput _leftBottomMax = new DigitalInput(3);
-    private DigitalInput _rightTopMax = new DigitalInput(5);
-    private DigitalInput _rightBottomMax = new DigitalInput(7);
+    private static DigitalInput _leftTopMax = new DigitalInput(2);
+    private static DigitalInput _leftBottomMax = new DigitalInput(3);
+    private static DigitalInput _rightTopMax = new DigitalInput(5);
+    private static DigitalInput _rightBottomMax = new DigitalInput(7);
 
-    private WPI_TalonSRX _rightMotor = new WPI_TalonSRX(22);
-    private WPI_TalonSRX _leftMotor = new WPI_TalonSRX(23);
-    private MotorControllerGroup _lift = new MotorControllerGroup(_leftMotor, _rightMotor);
+    private static WPI_TalonSRX _rightMotor = new WPI_TalonSRX(22);
+    private static WPI_TalonSRX _leftMotor = new WPI_TalonSRX(23);
+    private static MotorControllerGroup _lift = new MotorControllerGroup(_leftMotor, _rightMotor);
 
     public MainLift() {
         _rightMotor.configFactoryDefault();
         _leftMotor.configFactoryDefault();
+        _rightMotor.follow(_leftMotor);
     }
 
     public void Up(double speed) {

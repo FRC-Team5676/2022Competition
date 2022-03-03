@@ -6,18 +6,19 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
 public class Arms {
 
-    private DigitalInput _leftExtMax = new DigitalInput(0);
-    private DigitalInput _leftRetMax = new DigitalInput(1);
-    private DigitalInput _rightExtMax = new DigitalInput(6);
-    private DigitalInput _rightRetMax = new DigitalInput(4);
+    private static DigitalInput _leftExtMax = new DigitalInput(0);
+    private static DigitalInput _leftRetMax = new DigitalInput(1);
+    private static DigitalInput _rightExtMax = new DigitalInput(6);
+    private static DigitalInput _rightRetMax = new DigitalInput(4);
 
-    private WPI_TalonSRX _rightMotor = new WPI_TalonSRX(20);
-    private WPI_TalonSRX _leftMotor = new WPI_TalonSRX(21);
-    private MotorControllerGroup _arms = new MotorControllerGroup(_leftMotor, _rightMotor);
+    private static WPI_TalonSRX _rightMotor = new WPI_TalonSRX(20);
+    private static WPI_TalonSRX _leftMotor = new WPI_TalonSRX(21);
+    private static MotorControllerGroup _arms = new MotorControllerGroup(_leftMotor, _rightMotor);
 
     public Arms() {
         _rightMotor.configFactoryDefault();
         _leftMotor.configFactoryDefault();
+        _rightMotor.follow(_leftMotor);
     }
 
     public void Extend(double speed) {

@@ -171,15 +171,10 @@ public class Robot extends TimedRobot {
       lowerIntake.set(0.85);
     }
 
-    // Climb
-    if (ctl1.ButtonStart() || ctl2.ButtonStart()) {
-
-    }
-
     /* Main Lifts */
-    double liftSpeed = ctl1.LeftTrigger() + ctl2.LeftTrigger();
+    double liftSpeed = ctl1.LeftTrigger();
     if (liftSpeed > 0) {
-      if (ctl1.ButtonX() || ctl2.ButtonX()) {
+      if (ctl1.ButtonX()) {
         lift.Down(liftSpeed);
       } else {
         lift.Up(liftSpeed);
@@ -197,16 +192,15 @@ public class Robot extends TimedRobot {
         arms.Extend(armSpeed);
       }
     } else {
-      arms.Stop();;
+      arms.Stop();
+      ;
     }
 
-
-    // Arm Rotate
+    /* Arm Rotate */
+    Double rotSpeed = ctl1.RightStickY() * ctl1.RightStickY();
     if (ctl1.RightStickY() > 0) {
-      Double rotSpeed = ctl1.RightStickY() * ctl1.RightStickY();
       armRotate.set(rotSpeed);
     } else if (ctl1.RightStickY() < 0) {
-      Double rotSpeed = ctl1.RightStickY() * ctl1.RightStickY();
       armRotate.set(-rotSpeed);
     } else {
       armRotate.set(0);
