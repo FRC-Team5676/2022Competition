@@ -237,10 +237,10 @@ public class Robot extends TimedRobot {
 
     // Drive
     if (ctl1.LeftStickY() != 0 || ctl1.LeftStickX() != 0) {
-      robot.arcadeDrive(ctl1.LeftStickY(), ctl1.LeftStickX());
+      robot.arcadeDrive(ctl1.LeftStickX(), ctl1.LeftStickY());
     }
     if (ctl2.LeftStickY() != 0 || ctl2.LeftStickX() != 0) {
-      robot.arcadeDrive(ctl2.LeftStickY(), ctl2.LeftStickX());
+      robot.arcadeDrive(ctl2.LeftStickX(), ctl2.LeftStickY());
     }
 
   }
