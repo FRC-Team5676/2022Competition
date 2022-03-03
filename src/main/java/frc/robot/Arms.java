@@ -16,9 +16,11 @@ public class Arms {
     private MotorControllerGroup _arms = new MotorControllerGroup(_leftMotor, _rightMotor);
 
     public Arms() {
+        _rightMotor.configFactoryDefault();
+        _leftMotor.configFactoryDefault();
     }
 
-    public void RobotArmsExtend(double speed) {
+    public void Extend(double speed) {
         if (!_leftExtMax.get() && !_rightExtMax.get())
             ArmsExtend(speed);
         else if (!_leftExtMax.get() && _rightExtMax.get())
@@ -26,10 +28,10 @@ public class Arms {
         else if (_leftExtMax.get() && !_rightExtMax.get())
             RightExtend(speed);
         else
-            ArmsStop();
+            Stop();
     }
 
-    public void RobotArmsRetract(double speed) {
+    public void Retract(double speed) {
         if (!_leftRetMax.get() && !_rightRetMax.get())
             ArmsRetract(speed);
         else if (!_leftRetMax.get() && _rightRetMax.get())
@@ -37,7 +39,11 @@ public class Arms {
         else if (_leftRetMax.get() && !_rightRetMax.get())
             RightRetract(speed);
         else
-            ArmsStop();
+            Stop();
+    }
+
+    public void Stop() {
+        _arms.set(0);
     }
 
     public void LeftExtend(double speed) {
@@ -77,9 +83,4 @@ public class Arms {
         speed = Math.abs(speed);
         _arms.set(-speed);
     }
-
-    private void ArmsStop() {
-        _arms.set(0);
-    }
-
 }

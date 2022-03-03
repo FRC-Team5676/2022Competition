@@ -16,9 +16,11 @@ public class MainLift {
     private MotorControllerGroup _lift = new MotorControllerGroup(_leftMotor, _rightMotor);
 
     public MainLift() {
+        _rightMotor.configFactoryDefault();
+        _leftMotor.configFactoryDefault();
     }
 
-    public void RobotUp(double speed) {
+    public void Up(double speed) {
         if (!_leftTopMax.get() && !_rightTopMax.get())
             LiftUp(speed);
         else if (!_leftTopMax.get() && _rightTopMax.get())
@@ -26,10 +28,10 @@ public class MainLift {
         else if (_leftTopMax.get() && !_rightTopMax.get())
             RightUp(speed);
         else
-            LiftStop();
+            Stop();
     }
 
-    public void RobotDown(double speed) {
+    public void Down(double speed) {
         if (!_leftBottomMax.get() && !_rightBottomMax.get())
             LiftDown(speed);
         else if (!_leftBottomMax.get() && _rightBottomMax.get())
@@ -37,7 +39,11 @@ public class MainLift {
         else if (_leftBottomMax.get() && !_rightBottomMax.get())
             RightDown(speed);
         else
-            LiftStop();
+            Stop();
+    }
+
+    public void Stop() {
+        _lift.set(0);
     }
 
     public void LeftUp(double speed) {
@@ -78,7 +84,4 @@ public class MainLift {
         _lift.set(-speed);
     }
 
-    private void LiftStop() {
-        _lift.set(0);
-    }
 }

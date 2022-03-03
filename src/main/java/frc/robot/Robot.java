@@ -63,11 +63,9 @@ public class Robot extends TimedRobot {
   private static CANSparkMax driveLR = new CANSparkMax(13, CANSparkMaxLowLevel.MotorType.kBrushless);
   private static DifferentialDrive robot = new DifferentialDrive(driveLF, driveRF);
 
-  // Climbing drives
-  private static WPI_TalonSRX rightArmScrew = new WPI_TalonSRX(20);
-  private static WPI_TalonSRX leftArmScrew = new WPI_TalonSRX(21);
-  private static WPI_TalonSRX rightLiftScrew = new WPI_TalonSRX(22);
-  private static WPI_TalonSRX leftLiftScrew = new WPI_TalonSRX(23);
+  // Lifts & Arms
+  private static MainLift lift = new MainLift();
+  private static Arms arms = new Arms();
   private static WPI_TalonSRX armRotate = new WPI_TalonSRX(24);
 
   // Spark drives
@@ -99,21 +97,16 @@ public class Robot extends TimedRobot {
     CameraServer.startAutomaticCapture(0);
     CameraServer.startAutomaticCapture(1);
 
-    // Factory default talon drives
-    rightArmScrew.configFactoryDefault();
-    leftArmScrew.configFactoryDefault();
-    rightLiftScrew.configFactoryDefault();
-    leftLiftScrew.configFactoryDefault();
-
     // setup followers
-     driveRR.follow(driveRF);
-     driveLR.follow(driveLF);
+    driveRR.follow(driveRF);
+    driveLR.follow(driveLF);
 
     // flip values so robot moves forwardard when stick-forwardard/green LEDS
-     driveRF.setInverted(false);
-     driveLF.setInverted(true);
-     driveRR.setInverted(false);
-     driveLR.setInverted(true);
+    driveRF.setInverted(false);
+    driveLF.setInverted(false);
+    driveRR.setInverted(false);
+    driveLR.setInverted(false);
+
   }
 
   /**
@@ -207,45 +200,47 @@ public class Robot extends TimedRobot {
 
     }
 
-    /* Climb Manual */
-    int reverse;
-    if (ctl1.ButtonX() || ctl2.ButtonX()) {
-      reverse = -1;
-    } else {
-      reverse = 1;
-    }
-    if (ctl1.BumperLeft() || ctl2.BumperLeft() || ctl1.BumperRight() || ctl2.BumperRight()) {
-      if (ctl1.BumperLeft() || ctl2.BumperLeft()) {
-        rightLiftScrew.set(reverse * ctl1.RightTrigger());
-        leftLiftScrew.set(reverse * ctl1.LeftTrigger());
-      }
-      if (ctl1.BumperRight() || ctl2.BumperRight()) {
-        rightArmScrew.set(reverse * ctl1.RightTrigger());
-        leftArmScrew.set(reverse * ctl1.LeftTrigger());
+    /* Main Lifts */
+    double liftSpeed = ctl1.LeftTrigger() + ctl2.LeftTrigger();
+    if (liftSpeed > 0) {
+      if (ctl1.ButtonX() || ctl2.ButtonX()) {
+        lift.Down(liftSpeed);
+      } else {
+        lift.Up(liftSpeed);
       }
     } else {
-      rightArmScrew.set(reverse * ctl1.RightTrigger());
-      leftArmScrew.set(reverse * ctl1.RightTrigger());
-      rightLiftScrew.set(reverse * ctl1.LeftTrigger());
-      leftLiftScrew.set(reverse * ctl1.LeftTrigger());
+      lift.Stop();
     }
+
+    /* Arms */
+    double armSpeed = ctl1.RightTrigger() + ctl2.RightTrigger();
+    if (armSpeed > 0) {
+      if (ctl1.ButtonX() || ctl2.ButtonX()) {
+        arms.Retract(armSpeed);
+      } else {
+        arms.Extend(armSpeed);
+      }
+    } else {
+      arms.Stop();;
+    }
+
 
     // Arm Rotate
     if (ctl1.RightStickY() != 0) {
-      Double rotSpeed = ctl1.RightStickY();
+      Double rotSpeed = ctl1.RightStickY() * ctl1.RightStickY();
       armRotate.set(rotSpeed);
     }
     if (ctl2.RightStickY() != 0) {
-      Double rotSpeed = ctl2.RightStickY();
+      Double rotSpeed = ctl2.RightStickY() * ctl2.RightStickY();
       armRotate.set(rotSpeed);
     }
 
     // Drive
     if (ctl1.LeftStickY() != 0 || ctl1.LeftStickX() != 0) {
-      robot.arcadeDrive(ctl1.LeftStickY(), -ctl1.LeftStickX());
+      robot.arcadeDrive(ctl1.LeftStickY(), ctl1.LeftStickX());
     }
     if (ctl2.LeftStickY() != 0 || ctl2.LeftStickX() != 0) {
-      robot.arcadeDrive(ctl2.LeftStickY(), -ctl2.LeftStickX());
+      robot.arcadeDrive(ctl2.LeftStickY(), ctl2.LeftStickX());
     }
 
   }
