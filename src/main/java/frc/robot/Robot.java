@@ -13,22 +13,8 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
-
-import javax.lang.model.element.VariableElement;
-
-import com.ctre.phoenix.motorcontrol.Faults;
-import com.ctre.phoenix.motorcontrol.InvertType;
-
-//For Controller (physical, this is not the motor controllers.)
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.AnalogInput;
-
 //For Drive
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.drive.RobotDriveBase.MotorType;
 
 //For Pneumatics
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -37,9 +23,6 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 //For Cams
 import edu.wpi.first.cameraserver.CameraServer;
-
-//halo sensors (these tell the bot to stop climbing.)
-import edu.wpi.first.wpilibj.DigitalInput;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -206,9 +189,9 @@ public class Robot extends TimedRobot {
     }
 
     /* Arms */
-    double armSpeed = ctl1.RightTrigger() + ctl2.RightTrigger();
+    double armSpeed = ctl1.RightTrigger();
     if (armSpeed > 0) {
-      if (ctl1.ButtonX() || ctl2.ButtonX()) {
+      if (ctl1.ButtonX()) {
         arms.Retract(armSpeed);
       } else {
         arms.Extend(armSpeed);
@@ -219,13 +202,14 @@ public class Robot extends TimedRobot {
 
 
     // Arm Rotate
-    if (ctl1.RightStickY() != 0) {
+    if (ctl1.RightStickY() > 0) {
       Double rotSpeed = ctl1.RightStickY() * ctl1.RightStickY();
       armRotate.set(rotSpeed);
-    }
-    if (ctl2.RightStickY() != 0) {
-      Double rotSpeed = ctl2.RightStickY() * ctl2.RightStickY();
-      armRotate.set(rotSpeed);
+    } else if (ctl1.RightStickY() < 0) {
+      Double rotSpeed = ctl1.RightStickY() * ctl1.RightStickY();
+      armRotate.set(-rotSpeed);
+    } else {
+      armRotate.set(0);
     }
 
     // Drive
