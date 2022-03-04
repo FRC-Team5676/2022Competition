@@ -13,83 +13,84 @@ public class MainLift {
 
     private static WPI_TalonSRX _rightMotor = new WPI_TalonSRX(22);
     private static WPI_TalonSRX _leftMotor = new WPI_TalonSRX(23);
-    private static MotorControllerGroup _lift = new MotorControllerGroup(_leftMotor, _rightMotor);
+    private static MotorControllerGroup _lift = new MotorControllerGroup(_rightMotor, _leftMotor);
 
     public MainLift() {
         _rightMotor.configFactoryDefault();
         _leftMotor.configFactoryDefault();
-        _rightMotor.follow(_leftMotor);
     }
 
+    /*
     public void DioStatus() {
         System.out.println("Lift - Left Top: " + _leftTopMax.get());
         System.out.println("Lift - Left Bottom: " + _leftBottomMax.get());
         System.out.println("Lift - Right Top: " + _rightTopMax.get());
         System.out.println("Lift - Right Bottom: " + _rightBottomMax.get());
     }
-
-    public void Up(double speed) {
-        if (_leftTopMax.get() && _rightTopMax.get())
-            LiftUp(speed);
-        else if (_leftTopMax.get() && !_rightTopMax.get())
-            LeftUp(speed);
-        else if (!_leftTopMax.get() && _rightTopMax.get())
-            RightUp(speed);
-        else
-            Stop();
-    }
+    */
 
     public void Down(double speed) {
-        if (_leftBottomMax.get() && _rightBottomMax.get())
+        if (_leftTopMax.get() && _rightTopMax.get())
             LiftDown(speed);
-        else if (_leftBottomMax.get() && !_rightBottomMax.get())
+        else if (_leftTopMax.get() && !_rightTopMax.get())
             LeftDown(speed);
-        else if (!_leftBottomMax.get() && _rightBottomMax.get())
+        else if (!_leftTopMax.get() && _rightTopMax.get())
             RightDown(speed);
         else
             Stop();
     }
 
+    public void Up(double speed) {
+        if (_leftBottomMax.get() && _rightBottomMax.get())
+            LiftUp(speed);
+        else if (_leftBottomMax.get() && !_rightBottomMax.get())
+            LeftUp(speed);
+        else if (!_leftBottomMax.get() && _rightBottomMax.get())
+            RightUp(speed);
+        else
+            Stop();
+    }
+
     public void Stop() {
-        _lift.set(0);
+        _lift.stopMotor();
     }
 
     public void LeftUp(double speed) {
         speed = Math.abs(speed);
-        _leftMotor.set(-speed);
+        _leftMotor.set(speed);
     }
 
     public void LeftDown(double speed) {
         speed = Math.abs(speed);
-        _leftMotor.set(speed);
+        _leftMotor.set(-speed);
     }
 
     public void LeftStop() {
-        _leftMotor.set(0);
+        _leftMotor.stopMotor();
     }
 
     public void RightUp(double speed) {
         speed = Math.abs(speed);
-        _rightMotor.set(-speed);
+        _rightMotor.set(speed);
     }
 
     public void RightDown(double speed) {
         speed = Math.abs(speed);
-        _rightMotor.set(speed);
+        _rightMotor.set(-speed);
     }
 
     public void RightStop() {
-        _rightMotor.set(0);
+        _rightMotor.stopMotor();
     }
 
     private void LiftUp(double speed) {
         speed = Math.abs(speed);
-        _lift.set(-speed);
+        _lift.set(speed);
     }
 
     private void LiftDown(double speed) {
         speed = Math.abs(speed);
-        _lift.set(speed);
+        _lift.set(-speed);
     }
 
 }
