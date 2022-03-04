@@ -21,23 +21,30 @@ public class Arms {
         _rightMotor.follow(_leftMotor);
     }
 
+    public void DioStatus() {
+        System.out.println("Arm - Left Ext: " + _leftExtMax.get());
+        System.out.println("Arm - Left Ret: " + _leftRetMax.get());
+        System.out.println("Arm - Right Ext: " + _rightExtMax.get());
+        System.out.println("Arm - Right Ret: " + _rightRetMax.get());
+    }
+
     public void Extend(double speed) {
-        if (!_leftExtMax.get() && !_rightExtMax.get())
+        if (_leftExtMax.get() && _rightExtMax.get())
             ArmsExtend(speed);
-        else if (!_leftExtMax.get() && _rightExtMax.get())
-            LeftExtend(speed);
         else if (_leftExtMax.get() && !_rightExtMax.get())
+            LeftExtend(speed);
+        else if (!_leftExtMax.get() && _rightExtMax.get())
             RightExtend(speed);
         else
             Stop();
     }
 
     public void Retract(double speed) {
-        if (!_leftRetMax.get() && !_rightRetMax.get())
+        if (_leftRetMax.get() && _rightRetMax.get())
             ArmsRetract(speed);
-        else if (!_leftRetMax.get() && _rightRetMax.get())
-            LeftRetract(speed);
         else if (_leftRetMax.get() && !_rightRetMax.get())
+            LeftRetract(speed);
+        else if (!_leftRetMax.get() && _rightRetMax.get())
             RightRetract(speed);
         else
             Stop();

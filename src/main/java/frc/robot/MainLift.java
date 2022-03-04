@@ -21,23 +21,30 @@ public class MainLift {
         _rightMotor.follow(_leftMotor);
     }
 
+    public void DioStatus() {
+        System.out.println("Lift - Left Top: " + _leftTopMax.get());
+        System.out.println("Lift - Left Bottom: " + _leftBottomMax.get());
+        System.out.println("Lift - Right Top: " + _rightTopMax.get());
+        System.out.println("Lift - Right Bottom: " + _rightBottomMax.get());
+    }
+
     public void Up(double speed) {
-        if (!_leftTopMax.get() && !_rightTopMax.get())
+        if (_leftTopMax.get() && _rightTopMax.get())
             LiftUp(speed);
-        else if (!_leftTopMax.get() && _rightTopMax.get())
-            LeftUp(speed);
         else if (_leftTopMax.get() && !_rightTopMax.get())
+            LeftUp(speed);
+        else if (!_leftTopMax.get() && _rightTopMax.get())
             RightUp(speed);
         else
             Stop();
     }
 
     public void Down(double speed) {
-        if (!_leftBottomMax.get() && !_rightBottomMax.get())
+        if (_leftBottomMax.get() && _rightBottomMax.get())
             LiftDown(speed);
-        else if (!_leftBottomMax.get() && _rightBottomMax.get())
-            LeftDown(speed);
         else if (_leftBottomMax.get() && !_rightBottomMax.get())
+            LeftDown(speed);
+        else if (!_leftBottomMax.get() && _rightBottomMax.get())
             RightDown(speed);
         else
             Stop();
