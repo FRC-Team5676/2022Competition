@@ -56,12 +56,12 @@ public class MainLift {
 
     public void LeftUp(double speed) {
         speed = Math.abs(speed);
-        _leftMotor.set(speed);
+        _leftMotor.set(-speed);
     }
 
     public void LeftDown(double speed) {
         speed = Math.abs(speed);
-        _leftMotor.set(-speed);
+        _leftMotor.set(speed);
     }
 
     public void LeftStop() {
@@ -70,12 +70,12 @@ public class MainLift {
 
     public void RightUp(double speed) {
         speed = Math.abs(speed);
-        _rightMotor.set(speed);
+        _rightMotor.set(-speed);
     }
 
     public void RightDown(double speed) {
         speed = Math.abs(speed);
-        _rightMotor.set(-speed);
+        _rightMotor.set(speed);
     }
 
     public void RightStop() {
@@ -84,12 +84,12 @@ public class MainLift {
 
     private void LiftUp(double speed) {
         speed = Math.abs(speed);
-        _lift.set(speed);
+        _lift.set(-speed);
     }
 
     private void LiftDown(double speed) {
         speed = Math.abs(speed);
-        _lift.set(-speed);
+        _lift.set(speed);
     }
 
 }
