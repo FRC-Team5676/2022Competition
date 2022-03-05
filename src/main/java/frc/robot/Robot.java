@@ -74,6 +74,10 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
+    /* Init Static Classes */
+    Lifts.Init();
+    Arms.Init();
+    
     /* Camera Setup */
     CameraServer.startAutomaticCapture(0);
     CameraServer.startAutomaticCapture(1);
