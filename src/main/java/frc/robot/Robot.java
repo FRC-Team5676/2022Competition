@@ -1,30 +1,31 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+/* Copyright (c) FIRST and other WPILib contributors.
+ * Open Source Software; you can modify and/or share it under the terms of
+ * the WPILib BSD license file in the root directory of this project.
+*/
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-//Imports for Motor Control
+/* Imports for Motor Control */
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
-//For Drive
+/* For Drive */
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
-//For Pneumatics
+/* For Pneumatics */
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
-//For Cams
+/* For Cameras */
 import edu.wpi.first.cameraserver.CameraServer;
 
-/**
+/*
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the
@@ -39,33 +40,32 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  // Drivetrain drives
+  /* Drivetrain drives */
   private static CANSparkMax driveRF = new CANSparkMax(10, CANSparkMaxLowLevel.MotorType.kBrushless);
   private static CANSparkMax driveLF = new CANSparkMax(11, CANSparkMaxLowLevel.MotorType.kBrushless);
   private static CANSparkMax driveRR = new CANSparkMax(12, CANSparkMaxLowLevel.MotorType.kBrushless);
   private static CANSparkMax driveLR = new CANSparkMax(13, CANSparkMaxLowLevel.MotorType.kBrushless);
   private static DifferentialDrive robot = new DifferentialDrive(driveLF, driveRF);
 
-  // Lifts & Arms
+  /* Lifts & Arms */
   private static MainLift lift = new MainLift();
   private static Arms arms = new Arms();
   private static WPI_TalonSRX armRotate = new WPI_TalonSRX(24);
 
-  // Spark drives
+  /* Spark drives */
   private static PWMVictorSPX upperIntake = new PWMVictorSPX(0);
   private static PWMVictorSPX lowerIntake = new PWMVictorSPX(1);
 
-  // Joysticks
+  /* Joysticks */
   private static XboxController ctl1 = new XboxController(0);
   private static XboxController ctl2 = new XboxController(1);
 
-  // Pneumatics
-  // private static AirCylinder intakeExtension = new AirCylinder(0, 5, 6,
-  // PneumaticsModuleType.CTREPCM);
-  // private static AirCylinder rampLift = new AirCylinder(0, 7, 8,
-  // PneumaticsModuleType.CTREPCM);
+  /* Pneumatics */
+  private static AirCylinder intakeExtension = new AirCylinder(0, 1, 2, PneumaticsModuleType.CTREPCM);
+  private static AirCylinder rampLift = new AirCylinder(0, 3, 4, PneumaticsModuleType.CTREPCM);
+  private static AirCylinder armLatch = new AirCylinder(0, 5, 6, PneumaticsModuleType.CTREPCM);
 
-  /**
+  /*
    * This function is run when the robot is first started up and should be used
    * for any
    * initialization code.
@@ -76,16 +76,21 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
-    // Chooser Setup
+    /* Camera Setup */
     CameraServer.startAutomaticCapture(0);
     CameraServer.startAutomaticCapture(1);
 
-    // setup followers
+    /* Setup Drivetrain Followers */
     driveRR.follow(driveRF);
     driveLR.follow(driveLF);
+
+    /* Set Pneumatic Start Positions */
+    rampLift.Extend(false);
+    intakeExtension.Extend(false);
+    armLatch.Extend(true);
   }
 
-  /**
+  /*
    * This function is called every robot packet, no matter the mode. Use this for
    * items like
    * diagnostics that you want ran during disabled, autonomous, teleoperated and
@@ -147,28 +152,33 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
+    /* Arm Release Cylinder */
+
     // Intake Balls
-    Boolean buttonA = ctl1.ButtonA();
-    //intakeExtension.Extend(buttonA);
-    if (buttonA) {
+    Boolean intakeBalls = ctl1.ButtonA();
+    intakeExtension.Extend(intakeBalls);
+    if (intakeBalls) {
+      rampLift.Extend(false);
       upperIntake.set(0.30);
       lowerIntake.set(0.85);
     }
 
     // Shoot High
-    Boolean buttonY = ctl1.ButtonY();
-    if (buttonY) {
-      //intakeExtension.Extend(false);
+    Boolean shootHigh = ctl1.BumperLeft();
+    if (shootHigh) {
+      intakeExtension.Extend(false);
       upperIntake.set(-0.30);
       lowerIntake.set(0.85);
+      rampLift.Extend(true);
     }
 
     // Shoot Low
-    Boolean buttonB = ctl1.ButtonB();
-    if (buttonB) {
-      //intakeExtension.Extend(false);
+    Boolean shootLow = ctl1.BumperRight();
+    if (shootLow) {
+      intakeExtension.Extend(false);
       upperIntake.set(-0.50);
       lowerIntake.set(0.85);
+      rampLift.Extend(true);
     }
 
     /* Main Lifts */
@@ -185,7 +195,7 @@ public class Robot extends TimedRobot {
     /* Arms */
     double armSpeed = ctl1.RightTrigger();
     if (armSpeed > 0) {
-      if (ctl1.ButtonX()) 
+      if (ctl1.ButtonX())
         arms.RobotDown(armSpeed);
       else
         arms.RobotUp(armSpeed);
