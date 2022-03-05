@@ -28,4 +28,11 @@ public class AirCylinder {
     public Value Get() {
         return valve.get();
     }
+
+    public boolean IsExtended() {
+        if (valve.get() == Value.kForward)
+            return true;
+        else
+            return false;
+    }
 }
