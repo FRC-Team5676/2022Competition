@@ -27,7 +27,7 @@ public class MainLift {
         System.out.println("Lift - Right Bottom: " + _rightBottomMax.get());
     }
 
-    public void Up(double speed) {
+    public void RobotUp(double speed) {
         if (_leftBottomMax.get() && _rightBottomMax.get())
             LiftUp(speed);
         else if (_leftBottomMax.get() && !_rightBottomMax.get()) {
@@ -39,10 +39,10 @@ public class MainLift {
             RightUp(speed);
         }
         else
-            Stop();
+            RobotStop();
     }
 
-    public void Down(double speed) {
+    public void RobotDown(double speed) {
         if (_leftTopMax.get() && _rightTopMax.get())
             LiftDown(speed);
         else if (_leftTopMax.get() && !_rightTopMax.get()) {
@@ -54,10 +54,10 @@ public class MainLift {
             RightDown(speed);
         }
         else
-            Stop();
+            RobotStop();
     }
 
-    public void Stop() {
+    public void RobotStop() {
         _lift.stopMotor();
     }
 

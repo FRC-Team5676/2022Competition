@@ -148,54 +148,49 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     // Intake Balls
-    Boolean buttonA = ctl1.ButtonA() || ctl2.ButtonA();
-    // intakeExtension.Extend(buttonA);
+    Boolean buttonA = ctl1.ButtonA();
+    //intakeExtension.Extend(buttonA);
     if (buttonA) {
       upperIntake.set(0.30);
       lowerIntake.set(0.85);
     }
 
     // Shoot High
-    Boolean buttonY = ctl1.ButtonY() || ctl2.ButtonY();
+    Boolean buttonY = ctl1.ButtonY();
     if (buttonY) {
-      // intakeExtension.Extend(false);
+      //intakeExtension.Extend(false);
       upperIntake.set(-0.30);
       lowerIntake.set(0.85);
     }
 
     // Shoot Low
-    Boolean buttonB = ctl1.ButtonB() || ctl2.ButtonB();
+    Boolean buttonB = ctl1.ButtonB();
     if (buttonB) {
-      // intakeExtension.Extend(false);
+      //intakeExtension.Extend(false);
       upperIntake.set(-0.50);
       lowerIntake.set(0.85);
     }
 
     /* Main Lifts */
-    //lift.DioStatus();
     double liftSpeed = ctl1.LeftTrigger();
     if (liftSpeed > 0) {
-      if (ctl1.ButtonX()) {
-        lift.Down(liftSpeed);
-      } else {
-        lift.Up(liftSpeed);
-      }
+      if (ctl1.ButtonX())
+        lift.RobotDown(liftSpeed);
+      else
+        lift.RobotUp(liftSpeed);
     } else {
-      lift.Stop();
+      lift.RobotStop();
     }
 
     /* Arms */
-    //arms.DioStatus();
     double armSpeed = ctl1.RightTrigger();
     if (armSpeed > 0) {
-      if (ctl1.ButtonX()) {
-        arms.Retract(armSpeed);
-      } else {
-        arms.Extend(armSpeed);
-      }
+      if (ctl1.ButtonX()) 
+        arms.RobotDown(armSpeed);
+      else
+        arms.RobotUp(armSpeed);
     } else {
-      arms.Stop();
-      ;
+      arms.RobotStop();
     }
 
     /* Arm Rotate */
