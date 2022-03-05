@@ -159,14 +159,7 @@ public class Robot extends TimedRobot {
       latchChange = true;
     }
     if (latchChange) {
-      if (latch) {
-        armLatch.Extend(false);
-        armRotate.set(-0.5);
-        armLatch.Extend(true);
-        armRotate.stopMotor();
-      } else {
-        armLatch.Extend(false);
-      }
+      armLatch.Extend(latch);
       latchChange = false;
     }
 
@@ -221,8 +214,6 @@ public class Robot extends TimedRobot {
 
     /* Arm Rotate */
     double rotSpeed = ctl1.RightStickY() * ctl1.RightStickY();
-    if (armLatch.IsExtended())
-      rotSpeed = 0.0;
     if (ctl1.RightStickY() > 0.0) {
       armRotate.set(rotSpeed);
     } else if (ctl1.RightStickY() < 0.0) {
