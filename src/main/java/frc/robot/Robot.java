@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /* Imports for Motor Control */
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
@@ -45,10 +44,6 @@ public class Robot extends TimedRobot {
   private static CANSparkMax driveLR = new CANSparkMax(13, CANSparkMaxLowLevel.MotorType.kBrushless);
   private static DifferentialDrive robot = new DifferentialDrive(driveLF, driveRF);
 
-  /* Lifts & Arms */
-  private static Arms arms = new Arms();
-  private static WPI_TalonSRX armRotate = new WPI_TalonSRX(24);
-
   /* Spark drives */
   private static PWMVictorSPX upperIntake = new PWMVictorSPX(0);
   private static PWMVictorSPX lowerIntake = new PWMVictorSPX(1);
@@ -60,7 +55,6 @@ public class Robot extends TimedRobot {
   /* Pneumatics */
   private static AirCylinder intakeExtension = new AirCylinder(0, 0, 1, PneumaticsModuleType.CTREPCM);
   private static AirCylinder rampLift = new AirCylinder(0, 2, 3, PneumaticsModuleType.CTREPCM);
-  private static AirCylinder armLatch = new AirCylinder(0, 4, 5, PneumaticsModuleType.CTREPCM);
   boolean latch = true;
 
   /*
@@ -77,7 +71,8 @@ public class Robot extends TimedRobot {
     /* Init Static Classes */
     Lifts.Init();
     Arms.Init();
-    
+    ArmRotate.Init();
+
     /* Camera Setup */
     CameraServer.startAutomaticCapture(0);
     CameraServer.startAutomaticCapture(1);
@@ -89,7 +84,7 @@ public class Robot extends TimedRobot {
     /* Set Pneumatic Start Positions */
     rampLift.Extend(false);
     intakeExtension.Extend(false);
-    armLatch.Extend(true);
+    ArmRotate.Latch();
   }
 
   /*
@@ -162,7 +157,10 @@ public class Robot extends TimedRobot {
       latchChange = true;
     }
     if (latchChange) {
-      armLatch.Extend(latch);
+      if (latch)
+        ArmRotate.Latch();
+      else
+        ArmRotate.Unlatch();
       latchChange = false;
     }
 
@@ -193,13 +191,13 @@ public class Robot extends TimedRobot {
       rampLift.Extend(true);
     }
 
-    /* Main Lifts */
+    /* Lifts */
     double liftSpeed = ctl1.LeftTrigger();
     if (liftSpeed > 0) {
       if (ctl1.ButtonX())
         Lifts.RobotDown(liftSpeed);
       else
-      Lifts.RobotUp(liftSpeed);
+        Lifts.RobotUp(liftSpeed);
     } else {
       Lifts.RobotStop();
     }
@@ -208,21 +206,21 @@ public class Robot extends TimedRobot {
     double armSpeed = ctl1.RightTrigger();
     if (armSpeed > 0) {
       if (ctl1.ButtonX())
-        arms.RobotDown(armSpeed);
+        Arms.RobotDown(armSpeed);
       else
-        arms.RobotUp(armSpeed);
+        Arms.RobotUp(armSpeed);
     } else {
-      arms.RobotStop();
+      Arms.RobotStop();
     }
 
     /* Arm Rotate */
     double rotSpeed = ctl1.RightStickY() * ctl1.RightStickY();
     if (ctl1.RightStickY() > 0.0) {
-      armRotate.set(rotSpeed);
+      ArmRotate.RotateUp(rotSpeed);
     } else if (ctl1.RightStickY() < 0.0) {
-      armRotate.set(-rotSpeed);
+      ArmRotate.RotateDown(rotSpeed);
     } else {
-      armRotate.set(0);
+      ArmRotate.RotateStop();
     }
 
     // Drive

@@ -46,4 +46,7 @@ public class ArmRotate {
             armRotate.set(-speed);
         }
     }
+    public static void RotateStop() {
+        armRotate.stopMotor();
+    }
 }
