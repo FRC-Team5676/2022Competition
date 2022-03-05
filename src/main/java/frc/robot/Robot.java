@@ -110,7 +110,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
   }
 
-  /**
+  /*
    * This autonomous (along with the chooser code above) shows how to select
    * between different
    * autonomous modes using the dashboard. The sendable chooser code works with
@@ -148,12 +148,12 @@ public class Robot extends TimedRobot {
     }
   }
 
-  /** This function is called once when teleop is enabled. */
+  /* This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
   }
 
-  /** This function is called periodically during operator control. */
+  /* This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
 
@@ -176,7 +176,7 @@ public class Robot extends TimedRobot {
       latchChange = false;
     }
 
-    // Intake Balls
+    /* Intake Balls */
     boolean intakeBalls = ctl1.ButtonA();
     intakeExtension.Extend(intakeBalls);
     if (intakeBalls) {
@@ -185,7 +185,7 @@ public class Robot extends TimedRobot {
       lowerIntake.set(0.85);
     }
 
-    // Shoot High
+    /* Shoot High */
     boolean shootHigh = ctl1.BumperLeft();
     if (shootHigh) {
       intakeExtension.Extend(false);
@@ -194,7 +194,7 @@ public class Robot extends TimedRobot {
       rampLift.Extend(true);
     }
 
-    // Shoot Low
+    /* Shoot Low */
     boolean shootLow = ctl1.BumperRight();
     if (shootLow) {
       intakeExtension.Extend(false);
@@ -244,25 +244,24 @@ public class Robot extends TimedRobot {
     if (ctl2.LeftStickY() != 0 || ctl2.LeftStickX() != 0) {
       robot.arcadeDrive(ctl2.LeftStickX(), -ctl2.LeftStickY());
     }
-
   }
 
-  /** This function is called once when the robot is disabled. */
+  /* This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
   }
 
-  /** This function is called periodically when disabled. */
+  /* This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
   }
 
-  /** This function is called once when test mode is enabled. */
+  /* This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
   }
 
-  /** This function is called periodically during test mode. */
+  /* This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
   }
