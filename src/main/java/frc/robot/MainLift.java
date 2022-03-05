@@ -20,22 +20,24 @@ public class MainLift {
         _leftMotor.configFactoryDefault();
     }
 
-    /*
     public void DioStatus() {
         System.out.println("Lift - Left Top: " + _leftTopMax.get());
         System.out.println("Lift - Left Bottom: " + _leftBottomMax.get());
         System.out.println("Lift - Right Top: " + _rightTopMax.get());
         System.out.println("Lift - Right Bottom: " + _rightBottomMax.get());
     }
-    */
 
     public void Down(double speed) {
         if (_leftTopMax.get() && _rightTopMax.get())
             LiftDown(speed);
-        else if (_leftTopMax.get() && !_rightTopMax.get())
+        else if (_leftTopMax.get() && !_rightTopMax.get()) {
+            RightStop();
             LeftDown(speed);
-        else if (!_leftTopMax.get() && _rightTopMax.get())
+        }
+        else if (!_leftTopMax.get() && _rightTopMax.get()) {
+            LeftStop();
             RightDown(speed);
+        }
         else
             Stop();
     }
@@ -43,44 +45,20 @@ public class MainLift {
     public void Up(double speed) {
         if (_leftBottomMax.get() && _rightBottomMax.get())
             LiftUp(speed);
-        else if (_leftBottomMax.get() && !_rightBottomMax.get())
+        else if (_leftBottomMax.get() && !_rightBottomMax.get()) {
+            RightStop();
             LeftUp(speed);
-        else if (!_leftBottomMax.get() && _rightBottomMax.get())
+        }
+        else if (!_leftBottomMax.get() && _rightBottomMax.get()) {
+            LeftStop();
             RightUp(speed);
+        }
         else
             Stop();
     }
 
     public void Stop() {
         _lift.stopMotor();
-    }
-
-    public void LeftUp(double speed) {
-        speed = Math.abs(speed);
-        _leftMotor.set(speed);
-    }
-
-    public void LeftDown(double speed) {
-        speed = Math.abs(speed);
-        _leftMotor.set(-speed);
-    }
-
-    public void LeftStop() {
-        _leftMotor.stopMotor();
-    }
-
-    public void RightUp(double speed) {
-        speed = Math.abs(speed);
-        _rightMotor.set(speed);
-    }
-
-    public void RightDown(double speed) {
-        speed = Math.abs(speed);
-        _rightMotor.set(-speed);
-    }
-
-    public void RightStop() {
-        _rightMotor.stopMotor();
     }
 
     private void LiftUp(double speed) {
@@ -93,4 +71,31 @@ public class MainLift {
         _lift.set(-speed);
     }
 
+    private void LeftUp(double speed) {
+        speed = Math.abs(speed);
+        _leftMotor.set(speed);
+    }
+
+    private void LeftDown(double speed) {
+        speed = Math.abs(speed);
+        _leftMotor.set(-speed);
+    }
+
+    private void LeftStop() {
+        _leftMotor.stopMotor();
+    }
+
+    private void RightUp(double speed) {
+        speed = Math.abs(speed);
+        _rightMotor.set(speed);
+    }
+
+    private void RightDown(double speed) {
+        speed = Math.abs(speed);
+        _rightMotor.set(-speed);
+    }
+
+    private void RightStop() {
+        _rightMotor.stopMotor();
+    }
 }
