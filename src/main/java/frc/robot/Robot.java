@@ -84,7 +84,6 @@ public class Robot extends TimedRobot {
     /* Set Pneumatic Start Positions */
     rampLift.Extend(false);
     intakeExtension.Extend(false);
-    ArmRotate.Latch();
   }
 
   /*
