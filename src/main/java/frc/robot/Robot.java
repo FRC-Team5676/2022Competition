@@ -1,14 +1,27 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+/* Copyright (c) FIRST and other WPILib contributors.
+ * Open Source Software; you can modify and/or share it under the terms of
+ * the WPILib BSD license file in the root directory of this project.
+*/
 package frc.robot;
 
-//Imports for Motor Control
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+/* Imports for Motor Control */
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
-//For Cams
+/* For Drive */
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+
+/* For Pneumatics */
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+
+/* For Cameras */
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -16,9 +29,7 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-//
-
-/**
+/*
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the
@@ -33,35 +44,33 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  // Drivetrain drives
+  /* Drivetrain drives */
   private static CANSparkMax driveRF = new CANSparkMax(10, CANSparkMaxLowLevel.MotorType.kBrushless);
   private static CANSparkMax driveLF = new CANSparkMax(11, CANSparkMaxLowLevel.MotorType.kBrushless);
   private static CANSparkMax driveRR = new CANSparkMax(12, CANSparkMaxLowLevel.MotorType.kBrushless);
   private static CANSparkMax driveLR = new CANSparkMax(13, CANSparkMaxLowLevel.MotorType.kBrushless);
   private static DifferentialDrive robot = new DifferentialDrive(driveLF, driveRF);
 
-  // Climbing drives
-  private static WPI_TalonSRX rightArmScrew = new WPI_TalonSRX(20);
-  private static WPI_TalonSRX leftArmScrew = new WPI_TalonSRX(21);
-  private static WPI_TalonSRX rightLiftScrew = new WPI_TalonSRX(22);
-  private static WPI_TalonSRX leftLiftScrew = new WPI_TalonSRX(23);
+  /* Lifts & Arms */
+  private static MainLift lift = new MainLift();
+  private static Arms arms = new Arms();
   private static WPI_TalonSRX armRotate = new WPI_TalonSRX(24);
 
-  // Spark drives
+  /* Spark drives */
   private static PWMVictorSPX upperIntake = new PWMVictorSPX(0);
   private static PWMVictorSPX lowerIntake = new PWMVictorSPX(1);
 
-  // Joysticks
+  /* Joysticks */
   private static XboxController ctl1 = new XboxController(0);
   private static XboxController ctl2 = new XboxController(1);
 
-  // Pneumatics
-  // private static AirCylinder intakeExtension = new AirCylinder(0, 5, 6,
-  // PneumaticsModuleType.CTREPCM);
-  // private static AirCylinder rampLift = new AirCylinder(0, 7, 8,
-  // PneumaticsModuleType.CTREPCM);
+  /* Pneumatics */
+  private static AirCylinder intakeExtension = new AirCylinder(0, 0, 1, PneumaticsModuleType.CTREPCM);
+  private static AirCylinder rampLift = new AirCylinder(0, 2, 3, PneumaticsModuleType.CTREPCM);
+  private static AirCylinder armLatch = new AirCylinder(0, 4, 5, PneumaticsModuleType.CTREPCM);
+  boolean latch = true;
 
-  /**
+  /*
    * This function is run when the robot is first started up and should be used
    * for any
    * initialization code.
@@ -72,28 +81,21 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
-    // Chooser Setup
+    /* Camera Setup */
     CameraServer.startAutomaticCapture(0);
     CameraServer.startAutomaticCapture(1);
 
-    // Factory default talon drives
-    rightArmScrew.configFactoryDefault();
-    leftArmScrew.configFactoryDefault();
-    rightLiftScrew.configFactoryDefault();
-    leftLiftScrew.configFactoryDefault();
+    /* Setup Drivetrain Followers */
+    driveRR.follow(driveRF);
+    driveLR.follow(driveLF);
 
-    // setup followers
-     driveRR.follow(driveRF);
-     driveLR.follow(driveLF);
-
-    // flip values so robot moves forwardard when stick-forwardard/green LEDS
-     driveRF.setInverted(false);
-     driveLF.setInverted(true);
-     driveRR.setInverted(false);
-     driveLR.setInverted(true);
+    /* Set Pneumatic Start Positions */
+    rampLift.Extend(false);
+    intakeExtension.Extend(false);
+    armLatch.Extend(true);
   }
 
-  /**
+  /*
    * This function is called every robot packet, no matter the mode. Use this for
    * items like
    * diagnostics that you want ran during disabled, autonomous, teleoperated and
@@ -155,74 +157,92 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
+    /* Arm Release Cylinder */
+    boolean latchChange = false;
+    boolean latchButton = ctl1.ButtonY();
+    if (latchButton) {
+      latch = !latch;
+      latchChange = true;
+    }
+    if (latchChange) {
+      if (latch) {
+        armLatch.Extend(false);
+        armRotate.set(-0.5);
+        armLatch.Extend(true);
+        armRotate.stopMotor();
+      } else {
+        armLatch.Extend(false);
+      }
+      latchChange = false;
+    }
+
     // Intake Balls
-    Boolean buttonA = ctl1.ButtonA() || ctl2.ButtonA();
-    // intakeExtension.Extend(buttonA);
-    if (buttonA) {
+    boolean intakeBalls = ctl1.ButtonA();
+    intakeExtension.Extend(intakeBalls);
+    if (intakeBalls) {
+      rampLift.Extend(false);
       upperIntake.set(0.30);
       lowerIntake.set(0.85);
     }
 
     // Shoot High
-    Boolean buttonY = ctl1.ButtonY() || ctl2.ButtonY();
-    if (buttonY) {
-      // intakeExtension.Extend(false);
+    boolean shootHigh = ctl1.BumperLeft();
+    if (shootHigh) {
+      intakeExtension.Extend(false);
       upperIntake.set(-0.30);
       lowerIntake.set(0.85);
+      rampLift.Extend(true);
     }
 
     // Shoot Low
-    Boolean buttonB = ctl1.ButtonB() || ctl2.ButtonB();
-    if (buttonB) {
-      // intakeExtension.Extend(false);
+    boolean shootLow = ctl1.BumperRight();
+    if (shootLow) {
+      intakeExtension.Extend(false);
       upperIntake.set(-0.50);
       lowerIntake.set(0.85);
+      rampLift.Extend(true);
     }
 
-    // Climb
-    if (ctl1.ButtonStart() || ctl2.ButtonStart()) {
-
-    }
-
-    /* Climb Manual */
-    int reverse;
-    if (ctl1.ButtonX() || ctl2.ButtonX()) {
-      reverse = -1;
+    /* Main Lifts */
+    double liftSpeed = ctl1.LeftTrigger();
+    if (liftSpeed > 0) {
+      if (ctl1.ButtonX())
+        lift.RobotDown(liftSpeed);
+      else
+        lift.RobotUp(liftSpeed);
     } else {
-      reverse = 1;
-    }
-    if (ctl1.BumperLeft() || ctl2.BumperLeft() || ctl1.BumperRight() || ctl2.BumperRight()) {
-      if (ctl1.BumperLeft() || ctl2.BumperLeft()) {
-        rightLiftScrew.set(reverse * ctl1.RightTrigger());
-        leftLiftScrew.set(reverse * ctl1.LeftTrigger());
-      }
-      if (ctl1.BumperRight() || ctl2.BumperRight()) {
-        rightArmScrew.set(reverse * ctl1.RightTrigger());
-        leftArmScrew.set(reverse * ctl1.LeftTrigger());
-      }
-    } else {
-      rightArmScrew.set(reverse * ctl1.RightTrigger());
-      leftArmScrew.set(reverse * ctl1.RightTrigger());
-      rightLiftScrew.set(reverse * ctl1.LeftTrigger());
-      leftLiftScrew.set(reverse * ctl1.LeftTrigger());
+      lift.RobotStop();
     }
 
-    // Arm Rotate
-    if (ctl1.RightStickY() != 0) {
-      Double rotSpeed = ctl1.RightStickY();
-      armRotate.set(rotSpeed);
+    /* Arms */
+    double armSpeed = ctl1.RightTrigger();
+    if (armSpeed > 0) {
+      if (ctl1.ButtonX())
+        arms.RobotDown(armSpeed);
+      else
+        arms.RobotUp(armSpeed);
+    } else {
+      arms.RobotStop();
     }
-    if (ctl2.RightStickY() != 0) {
-      Double rotSpeed = ctl2.RightStickY();
+
+    /* Arm Rotate */
+    double rotSpeed = ctl1.RightStickY() * ctl1.RightStickY();
+    if (armLatch.IsExtended())
+      rotSpeed = 0.0;
+    if (ctl1.RightStickY() > 0.0) {
       armRotate.set(rotSpeed);
+    } else if (ctl1.RightStickY() < 0.0) {
+      armRotate.set(-rotSpeed);
+    } else {
+      armRotate.set(0);
     }
 
     // Drive
     if (ctl1.LeftStickY() != 0 || ctl1.LeftStickX() != 0) {
-      robot.arcadeDrive(ctl1.LeftStickY(), -ctl1.LeftStickX());
+      robot.arcadeDrive(ctl1.LeftStickX(), -ctl1.LeftStickY());
     }
     if (ctl2.LeftStickY() != 0 || ctl2.LeftStickX() != 0) {
-      robot.arcadeDrive(ctl2.LeftStickY(), -ctl2.LeftStickX());
+      robot.arcadeDrive(ctl2.LeftStickX(), -ctl2.LeftStickY());
     }
 
   }
