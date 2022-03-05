@@ -64,6 +64,7 @@ public class Robot extends TimedRobot {
   private static AirCylinder intakeExtension = new AirCylinder(0, 1, 2, PneumaticsModuleType.CTREPCM);
   private static AirCylinder rampLift = new AirCylinder(0, 3, 4, PneumaticsModuleType.CTREPCM);
   private static AirCylinder armLatch = new AirCylinder(0, 5, 6, PneumaticsModuleType.CTREPCM);
+  boolean latch = true;
 
   /*
    * This function is run when the robot is first started up and should be used
@@ -153,9 +154,21 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     /* Arm Release Cylinder */
+    boolean latchButton = ctl1.ButtonY();
+    if (latchButton) {
+      latch = !latch;
+    }
+    if (latch) {
+      armLatch.Extend(false);
+      armRotate.set(-0.5);
+      armLatch.Extend(true);
+      armRotate.stopMotor();
+    } else {
+      armLatch.Extend(false);
+    }
 
     // Intake Balls
-    Boolean intakeBalls = ctl1.ButtonA();
+    boolean intakeBalls = ctl1.ButtonA();
     intakeExtension.Extend(intakeBalls);
     if (intakeBalls) {
       rampLift.Extend(false);
@@ -164,7 +177,7 @@ public class Robot extends TimedRobot {
     }
 
     // Shoot High
-    Boolean shootHigh = ctl1.BumperLeft();
+    boolean shootHigh = ctl1.BumperLeft();
     if (shootHigh) {
       intakeExtension.Extend(false);
       upperIntake.set(-0.30);
@@ -173,7 +186,7 @@ public class Robot extends TimedRobot {
     }
 
     // Shoot Low
-    Boolean shootLow = ctl1.BumperRight();
+    boolean shootLow = ctl1.BumperRight();
     if (shootLow) {
       intakeExtension.Extend(false);
       upperIntake.set(-0.50);
@@ -204,7 +217,7 @@ public class Robot extends TimedRobot {
     }
 
     /* Arm Rotate */
-    Double rotSpeed = ctl1.RightStickY() * ctl1.RightStickY();
+    double rotSpeed = ctl1.RightStickY() * ctl1.RightStickY();
     if (armLatch.IsExtended()) rotSpeed = 0.0;
     if (ctl1.RightStickY() > 0.0) {
       armRotate.set(rotSpeed);
