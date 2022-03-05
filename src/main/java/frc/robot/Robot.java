@@ -154,17 +154,22 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     /* Arm Release Cylinder */
+    boolean latchChange = false;
     boolean latchButton = ctl1.ButtonY();
     if (latchButton) {
       latch = !latch;
+      latchChange = true;
     }
-    if (latch) {
-      armLatch.Extend(false);
-      armRotate.set(-0.5);
-      armLatch.Extend(true);
-      armRotate.stopMotor();
-    } else {
-      armLatch.Extend(false);
+    if (latchChange) {
+      if (latch) {
+        armLatch.Extend(false);
+        armRotate.set(-0.5);
+        armLatch.Extend(true);
+        armRotate.stopMotor();
+      } else {
+        armLatch.Extend(false);
+      }
+      latchChange = false;
     }
 
     // Intake Balls
@@ -218,7 +223,8 @@ public class Robot extends TimedRobot {
 
     /* Arm Rotate */
     double rotSpeed = ctl1.RightStickY() * ctl1.RightStickY();
-    if (armLatch.IsExtended()) rotSpeed = 0.0;
+    if (armLatch.IsExtended())
+      rotSpeed = 0.0;
     if (ctl1.RightStickY() > 0.0) {
       armRotate.set(rotSpeed);
     } else if (ctl1.RightStickY() < 0.0) {
