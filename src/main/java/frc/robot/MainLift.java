@@ -27,21 +27,6 @@ public class MainLift {
         System.out.println("Lift - Right Bottom: " + _rightBottomMax.get());
     }
 
-    public void Down(double speed) {
-        if (_leftTopMax.get() && _rightTopMax.get())
-            LiftDown(speed);
-        else if (_leftTopMax.get() && !_rightTopMax.get()) {
-            RightStop();
-            LeftDown(speed);
-        }
-        else if (!_leftTopMax.get() && _rightTopMax.get()) {
-            LeftStop();
-            RightDown(speed);
-        }
-        else
-            Stop();
-    }
-
     public void Up(double speed) {
         if (_leftBottomMax.get() && _rightBottomMax.get())
             LiftUp(speed);
@@ -52,6 +37,21 @@ public class MainLift {
         else if (!_leftBottomMax.get() && _rightBottomMax.get()) {
             LeftStop();
             RightUp(speed);
+        }
+        else
+            Stop();
+    }
+
+    public void Down(double speed) {
+        if (_leftTopMax.get() && _rightTopMax.get())
+            LiftDown(speed);
+        else if (_leftTopMax.get() && !_rightTopMax.get()) {
+            RightStop();
+            LeftDown(speed);
+        }
+        else if (!_leftTopMax.get() && _rightTopMax.get()) {
+            LeftStop();
+            RightDown(speed);
         }
         else
             Stop();

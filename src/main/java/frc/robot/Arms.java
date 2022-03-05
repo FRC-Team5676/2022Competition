@@ -28,58 +28,38 @@ public class Arms {
         System.out.println("Arm - Right Ret: " + _rightRetMax.get());
     }
 
-    public void Extend(double speed) {
-        if (_leftExtMax.get() && _rightExtMax.get())
-            ArmsExtend(speed);
-        else if (_leftExtMax.get() && !_rightExtMax.get())
-            LeftExtend(speed);
-        else if (!_leftExtMax.get() && _rightExtMax.get())
-            RightExtend(speed);
-        else
-            Stop();
-    }
-
-    public void Retract(double speed) {
+    public void RobotUp(double speed) {
         if (_leftRetMax.get() && _rightRetMax.get())
             ArmsRetract(speed);
-        else if (_leftRetMax.get() && !_rightRetMax.get())
+        else if (_leftRetMax.get() && !_rightRetMax.get()) {
+            RightStop();
             LeftRetract(speed);
-        else if (!_leftRetMax.get() && _rightRetMax.get())
+        }
+        else if (!_leftRetMax.get() && _rightRetMax.get()) {
+            LeftStop();
             RightRetract(speed);
+        }
         else
-            Stop();
+            RobotStop();
     }
 
-    public void Stop() {
-        _arms.set(0);
+    public void RobotDown(double speed) {
+        if (_leftExtMax.get() && _rightExtMax.get())
+            ArmsExtend(speed);
+        else if (_leftExtMax.get() && !_rightExtMax.get()) {
+            RightStop();
+            LeftExtend(speed);
+        }
+        else if (!_leftExtMax.get() && _rightExtMax.get()) {
+            LeftStop();
+            RightExtend(speed);
+        }
+        else
+            RobotStop();
     }
 
-    public void LeftExtend(double speed) {
-        speed = Math.abs(speed);
-        _leftMotor.set(speed);
-    }
-
-    public void LeftRetract(double speed) {
-        speed = Math.abs(speed);
-        _leftMotor.set(-speed);
-    }
-
-    public void LeftStop() {
-        _leftMotor.set(0);
-    }
-
-    public void RightExtend(double speed) {
-        speed = Math.abs(speed);
-        _rightMotor.set(speed);
-    }
-
-    public void RightRetract(double speed) {
-        speed = Math.abs(speed);
-        _rightMotor.set(-speed);
-    }
-
-    public void RightStop() {
-        _rightMotor.set(0);
+    public void RobotStop() {
+        _arms.stopMotor();
     }
 
     private void ArmsExtend(double speed) {
@@ -90,5 +70,33 @@ public class Arms {
     private void ArmsRetract(double speed) {
         speed = Math.abs(speed);
         _arms.set(-speed);
+    }
+
+    private void LeftExtend(double speed) {
+        speed = Math.abs(speed);
+        _leftMotor.set(speed);
+    }
+
+    private void LeftRetract(double speed) {
+        speed = Math.abs(speed);
+        _leftMotor.set(-speed);
+    }
+
+    private void LeftStop() {
+        _leftMotor.stopMotor();
+    }
+
+    private void RightExtend(double speed) {
+        speed = Math.abs(speed);
+        _rightMotor.set(speed);
+    }
+
+    private void RightRetract(double speed) {
+        speed = Math.abs(speed);
+        _rightMotor.set(-speed);
+    }
+
+    private void RightStop() {
+        _rightMotor.stopMotor();
     }
 }
