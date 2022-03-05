@@ -46,7 +46,6 @@ public class Robot extends TimedRobot {
   private static DifferentialDrive robot = new DifferentialDrive(driveLF, driveRF);
 
   /* Lifts & Arms */
-  private static Lifts lift = new Lifts();
   private static Arms arms = new Arms();
   private static WPI_TalonSRX armRotate = new WPI_TalonSRX(24);
 
@@ -194,11 +193,11 @@ public class Robot extends TimedRobot {
     double liftSpeed = ctl1.LeftTrigger();
     if (liftSpeed > 0) {
       if (ctl1.ButtonX())
-        lift.RobotDown(liftSpeed);
+        Lifts.RobotDown(liftSpeed);
       else
-        lift.RobotUp(liftSpeed);
+      Lifts.RobotUp(liftSpeed);
     } else {
-      lift.RobotStop();
+      Lifts.RobotStop();
     }
 
     /* Arms */

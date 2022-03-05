@@ -15,19 +15,19 @@ public class Lifts {
     private static WPI_TalonSRX _leftMotor = new WPI_TalonSRX(23);
     private static MotorControllerGroup _lift = new MotorControllerGroup(_rightMotor, _leftMotor);
 
-    public Lifts() {
+    public static void Init() {
         _rightMotor.configFactoryDefault();
         _leftMotor.configFactoryDefault();
     }
 
-    public void DioStatus() {
+    public static void DioStatus() {
         System.out.println("Lift - Left Top: " + _leftTopMax.get());
         System.out.println("Lift - Left Bottom: " + _leftBottomMax.get());
         System.out.println("Lift - Right Top: " + _rightTopMax.get());
         System.out.println("Lift - Right Bottom: " + _rightBottomMax.get());
     }
 
-    public void RobotUp(double speed) {
+    public static void RobotUp(double speed) {
         if (_leftBottomMax.get() && _rightBottomMax.get())
             LiftUp(speed);
         else if (_leftBottomMax.get() && !_rightBottomMax.get()) {
@@ -42,7 +42,7 @@ public class Lifts {
             RobotStop();
     }
 
-    public void RobotDown(double speed) {
+    public static void RobotDown(double speed) {
         if (_leftTopMax.get() && _rightTopMax.get())
             LiftDown(speed);
         else if (_leftTopMax.get() && !_rightTopMax.get()) {
@@ -57,45 +57,45 @@ public class Lifts {
             RobotStop();
     }
 
-    public void RobotStop() {
+    public static void RobotStop() {
         _lift.stopMotor();
     }
 
-    private void LiftUp(double speed) {
+    private static void LiftUp(double speed) {
         speed = Math.abs(speed);
         _lift.set(speed);
     }
 
-    private void LiftDown(double speed) {
+    private static void LiftDown(double speed) {
         speed = Math.abs(speed);
         _lift.set(-speed);
     }
 
-    private void LeftUp(double speed) {
+    private static void LeftUp(double speed) {
         speed = Math.abs(speed);
         _leftMotor.set(speed);
     }
 
-    private void LeftDown(double speed) {
+    private static void LeftDown(double speed) {
         speed = Math.abs(speed);
         _leftMotor.set(-speed);
     }
 
-    private void LeftStop() {
+    private static void LeftStop() {
         _leftMotor.stopMotor();
     }
 
-    private void RightUp(double speed) {
+    private static void RightUp(double speed) {
         speed = Math.abs(speed);
         _rightMotor.set(speed);
     }
 
-    private void RightDown(double speed) {
+    private static void RightDown(double speed) {
         speed = Math.abs(speed);
         _rightMotor.set(-speed);
     }
 
-    private void RightStop() {
+    private static void RightStop() {
         _rightMotor.stopMotor();
     }
 }
