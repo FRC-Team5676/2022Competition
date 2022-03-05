@@ -163,31 +163,30 @@ public class Robot extends TimedRobot {
       latchChange = false;
     }
 
-    /* Intake Balls */
+    /* Set Buttons */
     boolean intakeBalls = ctl1.ButtonA();
+    boolean shootHigh = ctl1.BumperLeft();
+    boolean shootLow = ctl1.BumperRight();
+
+    /* Intake Balls */
     intakeExtension.Extend(intakeBalls);
     if (intakeBalls) {
       rampLift.Extend(false);
-      upperIntake.set(0.30);
-      lowerIntake.set(0.85);
-    }
-
-    /* Shoot High */
-    boolean shootHigh = ctl1.BumperLeft();
-    if (shootHigh) {
-      intakeExtension.Extend(false);
       upperIntake.set(-0.30);
-      lowerIntake.set(0.85);
-      rampLift.Extend(true);
-    }
-
-    /* Shoot Low */
-    boolean shootLow = ctl1.BumperRight();
-    if (shootLow) {
+      lowerIntake.set(-0.85);
+    } else if (shootHigh) {
       intakeExtension.Extend(false);
-      upperIntake.set(-0.50);
-      lowerIntake.set(0.85);
+      upperIntake.set(0.15);
+      lowerIntake.set(-0.90);
       rampLift.Extend(true);
+    } else if (shootLow) {
+      intakeExtension.Extend(false);
+      upperIntake.set(0.15);
+      lowerIntake.set(-0.50);
+      rampLift.Extend(true);
+    } else {
+      upperIntake.stopMotor();
+      lowerIntake.stopMotor();
     }
 
     /* Lifts */
