@@ -46,7 +46,7 @@ public class Robot extends TimedRobot {
   private static DifferentialDrive robot = new DifferentialDrive(driveLF, driveRF);
 
   /* Lifts & Arms */
-  private static MainLift lift = new MainLift();
+  private static Lifts lift = new Lifts();
   private static Arms arms = new Arms();
   private static WPI_TalonSRX armRotate = new WPI_TalonSRX(24);
 

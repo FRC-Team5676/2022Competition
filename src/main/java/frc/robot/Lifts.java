@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
-public class MainLift {
+public class Lifts {
 
     private static DigitalInput _leftTopMax = new DigitalInput(2);
     private static DigitalInput _leftBottomMax = new DigitalInput(3);
@@ -15,7 +15,7 @@ public class MainLift {
     private static WPI_TalonSRX _leftMotor = new WPI_TalonSRX(23);
     private static MotorControllerGroup _lift = new MotorControllerGroup(_rightMotor, _leftMotor);
 
-    public MainLift() {
+    public Lifts() {
         _rightMotor.configFactoryDefault();
         _leftMotor.configFactoryDefault();
     }

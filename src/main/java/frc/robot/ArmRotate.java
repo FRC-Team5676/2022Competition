@@ -12,6 +12,10 @@ public class ArmRotate {
     private static AirCylinder armLatch = new AirCylinder(0, 4, 5, PneumaticsModuleType.CTREPCM);
     private static boolean IsLatched = true;
 
+    public static void Init() {
+        armRotate.configFactoryDefault();
+    }
+
     public static void Latch() {
         IsLatched = true;
         armLatch.Extend(false);

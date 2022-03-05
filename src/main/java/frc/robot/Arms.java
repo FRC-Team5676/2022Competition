@@ -18,7 +18,6 @@ public class Arms {
     public Arms() {
         _rightMotor.configFactoryDefault();
         _leftMotor.configFactoryDefault();
-        _rightMotor.follow(_leftMotor);
     }
 
     public void DioStatus() {
