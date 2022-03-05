@@ -173,7 +173,7 @@ public class Robot extends TimedRobot {
 
     /* Main Lifts */
     //lift.DioStatus();
-    double liftSpeed = 0.5 * ctl1.LeftTrigger();
+    double liftSpeed = ctl1.LeftTrigger();
     if (liftSpeed > 0) {
       if (ctl1.ButtonX()) {
         lift.Down(liftSpeed);
@@ -186,7 +186,7 @@ public class Robot extends TimedRobot {
 
     /* Arms */
     //arms.DioStatus();
-    double armSpeed = 0.5 * ctl1.RightTrigger();
+    double armSpeed = ctl1.RightTrigger();
     if (armSpeed > 0) {
       if (ctl1.ButtonX()) {
         arms.Retract(armSpeed);
