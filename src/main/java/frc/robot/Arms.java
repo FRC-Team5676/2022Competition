@@ -64,22 +64,22 @@ public class Arms {
 
     private void ArmsExtend(double speed) {
         speed = Math.abs(speed);
-        _arms.set(speed);
+        _arms.set(-speed);
     }
 
     private void ArmsRetract(double speed) {
         speed = Math.abs(speed);
-        _arms.set(-speed);
+        _arms.set(speed);
     }
 
     private void LeftExtend(double speed) {
         speed = Math.abs(speed);
-        _leftMotor.set(speed);
+        _leftMotor.set(-speed);
     }
 
     private void LeftRetract(double speed) {
         speed = Math.abs(speed);
-        _leftMotor.set(-speed);
+        _leftMotor.set(speed);
     }
 
     private void LeftStop() {
@@ -88,12 +88,12 @@ public class Arms {
 
     private void RightExtend(double speed) {
         speed = Math.abs(speed);
-        _rightMotor.set(speed);
+        _rightMotor.set(-speed);
     }
 
     private void RightRetract(double speed) {
         speed = Math.abs(speed);
-        _rightMotor.set(-speed);
+        _rightMotor.set(speed);
     }
 
     private void RightStop() {
