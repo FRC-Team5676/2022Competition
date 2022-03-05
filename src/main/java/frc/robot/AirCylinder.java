@@ -8,7 +8,8 @@ public class AirCylinder {
 
     final int delay = 250;
     private long lastTime;
-    private static DoubleSolenoid valve;
+    private DoubleSolenoid valve;
+    private boolean extended;
 
     public AirCylinder(int moduleNumber, int forwardChannel, int reverseChannel, PneumaticsModuleType moduleType) {
         valve = new DoubleSolenoid(moduleNumber, moduleType, forwardChannel, reverseChannel);
@@ -16,23 +17,25 @@ public class AirCylinder {
 
     public void Extend(Boolean extend) {
         if (System.currentTimeMillis() - lastTime > delay) {
-            if (extend) {
+            if (extend && !extended) {
                 valve.set(DoubleSolenoid.Value.kForward);
-            } else {
+                extended = true;
+            } else if (!extend && extended) {
                 valve.set(DoubleSolenoid.Value.kReverse);
+                extended = false;
             }
             lastTime = System.currentTimeMillis();
         }
     }
 
-    public Value Get() {
-        return valve.get();
-    }
-
     public boolean IsExtended() {
-        if (valve.get() == Value.kForward)
+        if (valve.get() == Value.kForward) {
+            extended = true;
             return true;
-        else
+        }
+        else {
+            extended = false;
             return false;
+        }
     }
 }

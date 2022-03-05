@@ -53,8 +53,9 @@ public class Robot extends TimedRobot {
   private static XboxController ctl2 = new XboxController(1);
 
   /* Pneumatics */
-  private static AirCylinder intakeExtension = new AirCylinder(0, 0, 1, PneumaticsModuleType.CTREPCM);
-  private static AirCylinder rampLift = new AirCylinder(0, 2, 3, PneumaticsModuleType.CTREPCM);
+  private static AirCylinder intakeExtension = new AirCylinder(1, 0, 1, PneumaticsModuleType.CTREPCM);
+  private static AirCylinder rampLift = new AirCylinder(1, 3, 2, PneumaticsModuleType.CTREPCM);
+  private static AirCylinder armLatch = new AirCylinder(1, 4, 5, PneumaticsModuleType.CTREPCM);
   boolean latch = true;
 
   /*
@@ -71,7 +72,7 @@ public class Robot extends TimedRobot {
     /* Init Static Classes */
     Lifts.Init();
     Arms.Init();
-    ArmRotate.Init();
+    //ArmRotate.Init();
 
     /* Camera Setup */
     CameraServer.startAutomaticCapture(0);
@@ -149,6 +150,8 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     /* Arm Latch */
+    armLatch.Extend(ctl1.ButtonY());
+    /*
     boolean latchChange = false;
     boolean latchButton = ctl1.ButtonY();
     if (latchButton) {
@@ -162,18 +165,19 @@ public class Robot extends TimedRobot {
         ArmRotate.Unlatch();
       latchChange = false;
     }
+    */
 
     /* Set Buttons */
     boolean intakeBalls = ctl1.ButtonA();
     boolean shootHigh = ctl1.BumperLeft();
     boolean shootLow = ctl1.BumperRight();
 
-    /* Intake Balls */
-    intakeExtension.Extend(intakeBalls);
+    /* Intake */
     if (intakeBalls) {
       rampLift.Extend(false);
+      intakeExtension.Extend(true);
       upperIntake.set(-0.30);
-      lowerIntake.set(-0.85);
+      lowerIntake.set(-0.50);
     } else if (shootHigh) {
       intakeExtension.Extend(false);
       upperIntake.set(0.15);
@@ -185,6 +189,8 @@ public class Robot extends TimedRobot {
       lowerIntake.set(-0.50);
       rampLift.Extend(true);
     } else {
+      intakeExtension.Extend(false);
+      rampLift.Extend(false);
       upperIntake.stopMotor();
       lowerIntake.stopMotor();
     }
@@ -201,6 +207,7 @@ public class Robot extends TimedRobot {
     }
 
     /* Arms */
+    Arms.DioStatus();
     double armSpeed = ctl1.RightTrigger();
     if (armSpeed > 0) {
       if (ctl1.ButtonX())
@@ -248,5 +255,7 @@ public class Robot extends TimedRobot {
   /* This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
+      intakeExtension.Extend(ctl1.ButtonA());
+      rampLift.Extend(ctl1.ButtonB());
   }
 }

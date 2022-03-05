@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 public class ArmRotate {
 
     private static WPI_TalonSRX armRotate = new WPI_TalonSRX(24);
-    private static AirCylinder armLatch = new AirCylinder(0, 4, 5, PneumaticsModuleType.CTREPCM);
     private static boolean IsLatched;
 
     public static void Init() {
@@ -19,19 +18,19 @@ public class ArmRotate {
 
     public static void Latch() {
         if (!IsLatched) {
-            RotateDown(0.2);
+            RotateDown(-0.2);
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
             }
-            armLatch.Extend(true);
+            //armLatch.Extend(true);
             armRotate.stopMotor();
             IsLatched = true;
         }
     }
 
     public static void Unlatch() {
-        armLatch.Extend(false);
+        //armLatch.Extend(false);
         IsLatched = false;
     }
 
