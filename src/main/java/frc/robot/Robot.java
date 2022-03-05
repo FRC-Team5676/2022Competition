@@ -61,9 +61,9 @@ public class Robot extends TimedRobot {
   private static XboxController ctl2 = new XboxController(1);
 
   /* Pneumatics */
-  private static AirCylinder intakeExtension = new AirCylinder(0, 1, 2, PneumaticsModuleType.CTREPCM);
-  private static AirCylinder rampLift = new AirCylinder(0, 3, 4, PneumaticsModuleType.CTREPCM);
-  private static AirCylinder armLatch = new AirCylinder(0, 5, 6, PneumaticsModuleType.CTREPCM);
+  private static AirCylinder intakeExtension = new AirCylinder(0, 0, 1, PneumaticsModuleType.CTREPCM);
+  private static AirCylinder rampLift = new AirCylinder(0, 2, 3, PneumaticsModuleType.CTREPCM);
+  private static AirCylinder armLatch = new AirCylinder(0, 4, 5, PneumaticsModuleType.CTREPCM);
   boolean latch = true;
 
   /*
