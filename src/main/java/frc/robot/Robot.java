@@ -205,9 +205,10 @@ public class Robot extends TimedRobot {
 
     /* Arm Rotate */
     Double rotSpeed = ctl1.RightStickY() * ctl1.RightStickY();
-    if (ctl1.RightStickY() > 0) {
+    if (armLatch.IsExtended()) rotSpeed = 0.0;
+    if (ctl1.RightStickY() > 0.0) {
       armRotate.set(rotSpeed);
-    } else if (ctl1.RightStickY() < 0) {
+    } else if (ctl1.RightStickY() < 0.0) {
       armRotate.set(-rotSpeed);
     } else {
       armRotate.set(0);
