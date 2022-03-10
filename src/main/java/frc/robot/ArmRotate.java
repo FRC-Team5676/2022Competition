@@ -3,9 +3,6 @@ package frc.robot;
 /* For Drive */
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-/* For Pneumatics */
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-
 public class ArmRotate {
 
     private static WPI_TalonSRX armRotate = new WPI_TalonSRX(24);
@@ -23,14 +20,12 @@ public class ArmRotate {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
             }
-            //armLatch.Extend(true);
             armRotate.stopMotor();
             IsLatched = true;
         }
     }
 
     public static void Unlatch() {
-        //armLatch.Extend(false);
         IsLatched = false;
     }
 

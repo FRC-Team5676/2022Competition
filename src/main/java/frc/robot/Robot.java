@@ -150,25 +150,12 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     /* Arm Latch */
-    armLatch.Extend(ctl1.ButtonY());
-    /*
-    boolean latchChange = false;
-    boolean latchButton = ctl1.ButtonY();
-    if (latchButton) {
-      latch = !latch;
-      latchChange = true;
-    }
-    if (latchChange) {
-      if (latch)
-        ArmRotate.Latch();
-      else
-        ArmRotate.Unlatch();
-      latchChange = false;
-    }
-    */
+    armLatch.Extend(ctl1.DpadUp());
 
     /* Set Buttons */
     boolean intakeBalls = ctl1.ButtonA();
+    boolean ballSuckBack = ctl1.ButtonB();
+    boolean raiseRamp = ctl1.ButtonY();
     boolean shootHigh = ctl1.BumperLeft();
     boolean shootLow = ctl1.BumperRight();
 
@@ -176,17 +163,18 @@ public class Robot extends TimedRobot {
     if (intakeBalls) {
       rampLift.Extend(false);
       intakeExtension.Extend(true);
-      upperIntake.set(-0.30);
+      upperIntake.set(-0.60);
       lowerIntake.set(-0.50);
+    } else if (ballSuckBack) {
+      upperIntake.set(-0.60);
     } else if (shootHigh) {
       intakeExtension.Extend(false);
-      upperIntake.set(0.15);
-      lowerIntake.set(-0.90);
-      rampLift.Extend(true);
+      upperIntake.set(0.20);
+      lowerIntake.set(-1);
     } else if (shootLow) {
       intakeExtension.Extend(false);
       upperIntake.set(0.15);
-      lowerIntake.set(-0.50);
+      lowerIntake.set(-0.60);
       rampLift.Extend(true);
     } else {
       intakeExtension.Extend(false);
@@ -194,6 +182,9 @@ public class Robot extends TimedRobot {
       upperIntake.stopMotor();
       lowerIntake.stopMotor();
     }
+
+    /* Rasie Ramp */
+    rampLift.Extend(raiseRamp);
 
     /* Lifts */
     double liftSpeed = ctl1.LeftTrigger();

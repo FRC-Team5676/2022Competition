@@ -100,6 +100,30 @@ public class XboxController {
         return false;
     }
 
+    public boolean DpadUp() {
+        int ang = _joystick.getPOV();
+        if (ang == 0) return true;
+        return false;
+    }
+
+    public boolean DpadRight() {
+        int ang = _joystick.getPOV();
+        if (ang == 90) return true;
+        return false;
+    }
+
+    public boolean DpadLeft() {
+        int ang = _joystick.getPOV();
+        if (ang == 270) return true;
+        return false;
+    }
+
+    public boolean DpadDown() {
+        int ang = _joystick.getPOV();
+        if (ang == 180) return true;
+        return false;
+    }
+
     private double GetPositionUsingDeadBand(double position) {
         /* Controller Deadband */
         if (Math.abs(position) < DeadBand) {
