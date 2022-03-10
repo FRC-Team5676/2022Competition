@@ -155,8 +155,8 @@ public class Robot extends TimedRobot {
     boolean raiseRamp = ctl1.ButtonY() || ctl2.ButtonY();
     boolean shootHigh = ctl1.BumperLeft() || ctl2.BumperLeft();
     boolean shootLow = ctl1.BumperRight() || ctl2.BumperRight();
-    boolean latch = ctl1.DpadUp() || ctl1.DpadUp();
-    boolean halfSpeed = ctl1.DpadRight() || ctl1.DpadRight();
+    boolean latch = ctl1.DpadUp() || ctl2.DpadUp();
+    boolean halfSpeed = ctl1.DpadRight() || ctl2.DpadRight();
 
     /* Arm Latch */
     armLatch.Extend(latch);
@@ -190,7 +190,7 @@ public class Robot extends TimedRobot {
     /* Lifts */
     double liftSpeed = ctl1.LeftTrigger() + ctl2.LeftTrigger();
     if (liftSpeed > 0) {
-      if (ctl1.ButtonX())
+      if (ctl1.ButtonX() || ctl2.ButtonX())
         Lifts.RobotDown(liftSpeed);
       else
         Lifts.RobotUp(liftSpeed);
@@ -202,7 +202,7 @@ public class Robot extends TimedRobot {
     Arms.DioStatus();
     double armSpeed = ctl1.RightTrigger() + ctl2.RightTrigger();
     if (armSpeed > 0) {
-      if (ctl1.ButtonX())
+      if (ctl1.ButtonX() || ctl2.ButtonX())
         Arms.RobotDown(armSpeed);
       else
         Arms.RobotUp(armSpeed);
