@@ -202,7 +202,7 @@ public class Robot extends TimedRobot {
     Arms.DioStatus();
     double armSpeed = ctl1.RightTrigger() + ctl2.RightTrigger();
     if (armSpeed > 0) {
-      if (ctl1.ButtonX() || ctl2.ButtonX())
+      if (ctl1.DpadDown() || ctl2.DpadDown())
         Arms.RobotDown(armSpeed);
       else
         Arms.RobotUp(armSpeed);
