@@ -149,15 +149,17 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    /* Arm Latch */
-    armLatch.Extend(ctl1.DpadUp());
-
     /* Set Buttons */
-    boolean intakeBalls = ctl1.ButtonA();
-    boolean ballSuckBack = ctl1.ButtonB();
-    boolean raiseRamp = ctl1.ButtonY();
-    boolean shootHigh = ctl1.BumperLeft();
-    boolean shootLow = ctl1.BumperRight();
+    boolean intakeBalls = ctl1.ButtonA() || ctl2.ButtonA();
+    boolean ballSuckBack = ctl1.ButtonB() || ctl2.ButtonB();
+    boolean raiseRamp = ctl1.ButtonY() || ctl2.ButtonY();
+    boolean shootHigh = ctl1.BumperLeft() || ctl2.BumperLeft();
+    boolean shootLow = ctl1.BumperRight() || ctl2.BumperRight();
+    boolean latch = ctl1.DpadUp() || ctl1.DpadUp();
+    boolean halfSpeed = ctl1.DpadRight() || ctl1.DpadRight();
+
+    /* Arm Latch */
+    armLatch.Extend(latch);
 
     /* Intake */
     if (intakeBalls) {
@@ -171,8 +173,8 @@ public class Robot extends TimedRobot {
     } else if (shootHigh) {
       intakeExtension.Extend(false);
       rampLift.Extend(raiseRamp);
-      upperIntake.set(0.20);
-      lowerIntake.set(-1);
+      upperIntake.set(0.15);
+      lowerIntake.set(-1.0);
     } else if (shootLow) {
       intakeExtension.Extend(false);
       rampLift.Extend(raiseRamp);
@@ -185,10 +187,8 @@ public class Robot extends TimedRobot {
       lowerIntake.stopMotor();
     }
 
-    /* Rasie Ramp */
-
     /* Lifts */
-    double liftSpeed = ctl1.LeftTrigger();
+    double liftSpeed = ctl1.LeftTrigger() + ctl2.LeftTrigger();
     if (liftSpeed > 0) {
       if (ctl1.ButtonX())
         Lifts.RobotDown(liftSpeed);
@@ -200,7 +200,7 @@ public class Robot extends TimedRobot {
 
     /* Arms */
     Arms.DioStatus();
-    double armSpeed = ctl1.RightTrigger();
+    double armSpeed = ctl1.RightTrigger() + ctl2.RightTrigger();
     if (armSpeed > 0) {
       if (ctl1.ButtonX())
         Arms.RobotDown(armSpeed);
@@ -212,20 +212,23 @@ public class Robot extends TimedRobot {
 
     /* Arm Rotate */
     double rotSpeed = ctl1.RightStickY() * ctl1.RightStickY();
-    if (ctl1.RightStickY() > 0.0) {
+    rotSpeed = rotSpeed + ctl2.RightStickY() * ctl2.RightStickY();
+    if (ctl1.RightStickY() > 0.0 || ctl2.RightStickY() > 0.0) {
       ArmRotate.RotateUp(rotSpeed);
-    } else if (ctl1.RightStickY() < 0.0) {
+    } else if (ctl1.RightStickY() < 0.0 || ctl2.RightStickY() < 0.0) {
       ArmRotate.RotateDown(rotSpeed);
     } else {
       ArmRotate.RotateStop();
     }
 
     // Drive
+    double driveSpeed = 1.0;
+    if (halfSpeed) driveSpeed = 0.5;
     if (ctl1.LeftStickY() != 0 || ctl1.LeftStickX() != 0) {
-      robot.arcadeDrive(ctl1.LeftStickX(), -ctl1.LeftStickY());
+      robot.arcadeDrive(driveSpeed * ctl1.LeftStickX(), driveSpeed * -ctl1.LeftStickY());
     }
     if (ctl2.LeftStickY() != 0 || ctl2.LeftStickX() != 0) {
-      robot.arcadeDrive(ctl2.LeftStickX(), -ctl2.LeftStickY());
+      robot.arcadeDrive(driveSpeed * ctl2.LeftStickX(), driveSpeed * -ctl2.LeftStickY());
     }
   }
 
