@@ -161,30 +161,31 @@ public class Robot extends TimedRobot {
 
     /* Intake */
     if (intakeBalls) {
-      rampLift.Extend(false);
       intakeExtension.Extend(true);
+      rampLift.Extend(false);
       upperIntake.set(-0.60);
       lowerIntake.set(-0.50);
     } else if (ballSuckBack) {
+      rampLift.Extend(true);
       upperIntake.set(-0.60);
     } else if (shootHigh) {
       intakeExtension.Extend(false);
+      rampLift.Extend(raiseRamp);
       upperIntake.set(0.20);
       lowerIntake.set(-1);
     } else if (shootLow) {
       intakeExtension.Extend(false);
+      rampLift.Extend(raiseRamp);
       upperIntake.set(0.15);
       lowerIntake.set(-0.60);
-      rampLift.Extend(true);
     } else {
       intakeExtension.Extend(false);
-      rampLift.Extend(false);
+      rampLift.Extend(raiseRamp);
       upperIntake.stopMotor();
       lowerIntake.stopMotor();
     }
 
     /* Rasie Ramp */
-    rampLift.Extend(raiseRamp);
 
     /* Lifts */
     double liftSpeed = ctl1.LeftTrigger();
