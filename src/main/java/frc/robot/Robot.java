@@ -58,6 +58,9 @@ public class Robot extends TimedRobot {
   private static AirCylinder armLatch = new AirCylinder(1, 4, 5, PneumaticsModuleType.CTREPCM);
   boolean extendIntake = false;
 
+  /* Delay Times */
+  long _intakeLastTime;
+
   /*
    * This function is run when the robot is first started up and should be used
    * for any
@@ -151,6 +154,7 @@ public class Robot extends TimedRobot {
 
     /* Set Buttons */
     boolean latch = ctl1.DpadUp() || ctl2.DpadUp();
+    boolean intakeExt = ctl1.ButtonB() || ctl2.ButtonB();
     boolean intakeBalls = (ctl1.ButtonA() || ctl2.ButtonA()) && intakeExtension.IsExtended();
     boolean ballSuckBack = (ctl1.ButtonA() || ctl2.ButtonA()) && !intakeExtension.IsExtended();
     boolean raiseRamp = ctl1.ButtonY() || ctl2.ButtonY();
@@ -166,8 +170,12 @@ public class Robot extends TimedRobot {
     armLatch.Extend(latch);
 
     /* Intake */
-    if (ctl1.ButtonB() || ctl2.ButtonB())
-      extendIntake = !extendIntake;
+    if (intakeExt) {
+      if (System.currentTimeMillis() - _intakeLastTime > 250) {
+        extendIntake = !extendIntake;
+        _intakeLastTime = System.currentTimeMillis();
+      }
+    }
     intakeExtension.Extend(extendIntake);
 
     /* Intake, Suckback & Shoot */
@@ -262,7 +270,5 @@ public class Robot extends TimedRobot {
   /* This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    intakeExtension.Extend(ctl1.ButtonA());
-    rampLift.Extend(ctl1.ButtonB());
   }
 }

@@ -22,6 +22,11 @@ public class XboxController {
         return _joystick.getRawButton(2);
     }
 
+    public boolean ButtonBPressed() {
+        // 2
+        return _joystick.getRawButtonPressed(2);
+    }
+
     public boolean ButtonX() {
         // 3
         return _joystick.getRawButton(3);
@@ -102,25 +107,29 @@ public class XboxController {
 
     public boolean DpadUp() {
         int ang = _joystick.getPOV();
-        if (ang == 0) return true;
+        if (ang == 0)
+            return true;
         return false;
     }
 
     public boolean DpadRight() {
         int ang = _joystick.getPOV();
-        if (ang == 90) return true;
+        if (ang == 90)
+            return true;
         return false;
     }
 
     public boolean DpadLeft() {
         int ang = _joystick.getPOV();
-        if (ang == 270) return true;
+        if (ang == 270)
+            return true;
         return false;
     }
 
     public boolean DpadDown() {
         int ang = _joystick.getPOV();
-        if (ang == 180) return true;
+        if (ang == 180)
+            return true;
         return false;
     }
 
