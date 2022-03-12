@@ -182,24 +182,24 @@ public class Robot extends TimedRobot {
     if (intakeBalls) {
       /* Intake Balls */
       _rampLift.Extend(false);
-      _upperIntake.set(-0.60);
-      _lowerIntake.set(-0.50);
+      _upperIntake.set(-1.0);
+      _lowerIntake.set(-0.5);
     } else if (ballSuckBack) {
       /* Ball Suckback */
       _rampLift.Extend(true);
-      _upperIntake.set(-0.40);
+      _upperIntake.set(-1.0);
     } else if (shootHigh) {
       /* Shoot High */
       _intakeExtension.Extend(false);
       _rampLift.Extend(raiseRamp);
-      _upperIntake.set(0.15);
+      _upperIntake.set(0.8);
       _lowerIntake.set(-1.0);
     } else if (shootLow) {
       /* Shoot Low */
       _intakeExtension.Extend(false);
       _rampLift.Extend(raiseRamp);
-      _upperIntake.set(0.15);
-      _lowerIntake.set(-0.60);
+      _upperIntake.set(0.4);
+      _lowerIntake.set(-0.6);
     } else {
       /* At Rest */
       _rampLift.Extend(raiseRamp);
