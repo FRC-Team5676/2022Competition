@@ -6,35 +6,35 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class AirCylinder {
 
-    final int delay = 250;
-    private long lastTime;
-    private DoubleSolenoid valve;
-    private boolean extended;
+    final int Delay = 250;
+    private long _lastTime;
+    private DoubleSolenoid _valve;
+    private boolean _extended;
 
     public AirCylinder(int moduleNumber, int forwardChannel, int reverseChannel, PneumaticsModuleType moduleType) {
-        valve = new DoubleSolenoid(moduleNumber, moduleType, forwardChannel, reverseChannel);
+        _valve = new DoubleSolenoid(moduleNumber, moduleType, forwardChannel, reverseChannel);
     }
 
     public void Extend(Boolean extend) {
-        if (System.currentTimeMillis() - lastTime > delay) {
-            if (extend && !extended) {
-                valve.set(DoubleSolenoid.Value.kForward);
-                extended = true;
-            } else if (!extend && extended) {
-                valve.set(DoubleSolenoid.Value.kReverse);
-                extended = false;
+        if (System.currentTimeMillis() - _lastTime > Delay) {
+            if (extend && !_extended) {
+                _valve.set(DoubleSolenoid.Value.kForward);
+                _extended = true;
+            } else if (!extend && _extended) {
+                _valve.set(DoubleSolenoid.Value.kReverse);
+                _extended = false;
             }
-            lastTime = System.currentTimeMillis();
+            _lastTime = System.currentTimeMillis();
         }
     }
 
     public boolean IsExtended() {
-        if (valve.get() == Value.kForward) {
-            extended = true;
+        if (_valve.get() == Value.kForward) {
+            _extended = true;
             return true;
         }
         else {
-            extended = false;
+            _extended = false;
             return false;
         }
     }
