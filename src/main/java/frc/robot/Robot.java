@@ -150,12 +150,16 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     /* Set Buttons */
+    boolean latch = ctl1.DpadUp() || ctl2.DpadUp();
     boolean intakeBalls = ctl1.ButtonA() || ctl2.ButtonA();
     boolean ballSuckBack = ctl1.ButtonB() || ctl2.ButtonB();
     boolean raiseRamp = ctl1.ButtonY() || ctl2.ButtonY();
     boolean shootHigh = ctl1.BumperLeft() || ctl2.BumperLeft();
     boolean shootLow = ctl1.BumperRight() || ctl2.BumperRight();
-    boolean latch = ctl1.DpadUp() || ctl2.DpadUp();
+    boolean c1Down = (ctl1.ButtonX() && ctl1.LeftTrigger() > 0);
+    boolean c2Down = (ctl2.ButtonX() && ctl2.LeftTrigger() > 0);
+    boolean c1Ret = (ctl1.ButtonX() && ctl1.RightTrigger() > 0);
+    boolean c2Ret = (ctl2.ButtonX() && ctl2.RightTrigger() > 0);
     boolean halfSpeed = ctl1.DpadRight() || ctl2.DpadRight();
 
     /* Arm Latch */
@@ -190,7 +194,7 @@ public class Robot extends TimedRobot {
     /* Lifts */
     double liftSpeed = ctl1.LeftTrigger() + ctl2.LeftTrigger();
     if (liftSpeed > 0) {
-      if (ctl1.ButtonX() || ctl2.ButtonX())
+      if (c1Down || c2Down)
         Lifts.RobotDown(liftSpeed);
       else
         Lifts.RobotUp(liftSpeed);
@@ -199,10 +203,9 @@ public class Robot extends TimedRobot {
     }
 
     /* Arms */
-    Arms.DioStatus();
     double armSpeed = ctl1.RightTrigger() + ctl2.RightTrigger();
     if (armSpeed > 0) {
-      if (ctl1.DpadDown() || ctl2.DpadDown())
+      if (c1Ret || c2Ret)
         Arms.RobotDown(armSpeed);
       else
         Arms.RobotUp(armSpeed);
