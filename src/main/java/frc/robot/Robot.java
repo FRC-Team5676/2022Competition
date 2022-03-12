@@ -56,7 +56,7 @@ public class Robot extends TimedRobot {
   private static AirCylinder intakeExtension = new AirCylinder(1, 0, 1, PneumaticsModuleType.CTREPCM);
   private static AirCylinder rampLift = new AirCylinder(1, 3, 2, PneumaticsModuleType.CTREPCM);
   private static AirCylinder armLatch = new AirCylinder(1, 4, 5, PneumaticsModuleType.CTREPCM);
-  boolean latch = true;
+  boolean extendIntake = false;
 
   /*
    * This function is run when the robot is first started up and should be used
@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
     /* Init Static Classes */
     Lifts.Init();
     Arms.Init();
-    //ArmRotate.Init();
+    // ArmRotate.Init();
 
     /* Camera Setup */
     CameraServer.startAutomaticCapture(0);
@@ -151,8 +151,8 @@ public class Robot extends TimedRobot {
 
     /* Set Buttons */
     boolean latch = ctl1.DpadUp() || ctl2.DpadUp();
-    boolean intakeBalls = ctl1.ButtonA() || ctl2.ButtonA();
-    boolean ballSuckBack = ctl1.ButtonB() || ctl2.ButtonB();
+    boolean intakeBalls = (ctl1.ButtonA() || ctl2.ButtonA()) && intakeExtension.IsExtended();
+    boolean ballSuckBack = (ctl1.ButtonA() || ctl2.ButtonA()) && !intakeExtension.IsExtended();
     boolean raiseRamp = ctl1.ButtonY() || ctl2.ButtonY();
     boolean shootHigh = ctl1.BumperLeft() || ctl2.BumperLeft();
     boolean shootLow = ctl1.BumperRight() || ctl2.BumperRight();
@@ -166,26 +166,34 @@ public class Robot extends TimedRobot {
     armLatch.Extend(latch);
 
     /* Intake */
+    if (ctl1.ButtonB() || ctl2.ButtonB())
+      extendIntake = !extendIntake;
+    intakeExtension.Extend(extendIntake);
+
+    /* Intake, Suckback & Shoot */
     if (intakeBalls) {
-      intakeExtension.Extend(true);
+      /* Intake Balls */
       rampLift.Extend(false);
       upperIntake.set(-0.60);
       lowerIntake.set(-0.50);
     } else if (ballSuckBack) {
+      /* Ball Suckback */
       rampLift.Extend(true);
-      upperIntake.set(-0.60);
+      upperIntake.set(-0.40);
     } else if (shootHigh) {
+      /* Shoot High */
       intakeExtension.Extend(false);
       rampLift.Extend(raiseRamp);
       upperIntake.set(0.15);
       lowerIntake.set(-1.0);
     } else if (shootLow) {
+      /* Shoot Low */
       intakeExtension.Extend(false);
       rampLift.Extend(raiseRamp);
       upperIntake.set(0.15);
       lowerIntake.set(-0.60);
     } else {
-      intakeExtension.Extend(false);
+      /* At Rest */
       rampLift.Extend(raiseRamp);
       upperIntake.stopMotor();
       lowerIntake.stopMotor();
@@ -226,7 +234,8 @@ public class Robot extends TimedRobot {
 
     // Drive
     double driveSpeed = 1.0;
-    if (halfSpeed) driveSpeed = 0.5;
+    if (halfSpeed)
+      driveSpeed = 0.5;
     if (ctl1.LeftStickY() != 0 || ctl1.LeftStickX() != 0) {
       robot.arcadeDrive(driveSpeed * ctl1.LeftStickX(), driveSpeed * -ctl1.LeftStickY());
     }
@@ -253,7 +262,7 @@ public class Robot extends TimedRobot {
   /* This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-      intakeExtension.Extend(ctl1.ButtonA());
-      rampLift.Extend(ctl1.ButtonB());
+    intakeExtension.Extend(ctl1.ButtonA());
+    rampLift.Extend(ctl1.ButtonB());
   }
 }
