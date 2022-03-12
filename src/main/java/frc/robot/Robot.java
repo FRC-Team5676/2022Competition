@@ -34,28 +34,28 @@ import edu.wpi.first.cameraserver.CameraServer;
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private String _autoSelected;
+  private final SendableChooser<String> _chooser = new SendableChooser<>();
 
   /* Drivetrain drives */
-  private static CANSparkMax driveRF = new CANSparkMax(10, CANSparkMaxLowLevel.MotorType.kBrushless);
-  private static CANSparkMax driveLF = new CANSparkMax(11, CANSparkMaxLowLevel.MotorType.kBrushless);
-  private static CANSparkMax driveRR = new CANSparkMax(12, CANSparkMaxLowLevel.MotorType.kBrushless);
-  private static CANSparkMax driveLR = new CANSparkMax(13, CANSparkMaxLowLevel.MotorType.kBrushless);
-  private static DifferentialDrive robot = new DifferentialDrive(driveLF, driveRF);
+  private static CANSparkMax _driveRF = new CANSparkMax(10, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private static CANSparkMax _driveLF = new CANSparkMax(11, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private static CANSparkMax _driveRR = new CANSparkMax(12, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private static CANSparkMax _driveLR = new CANSparkMax(13, CANSparkMaxLowLevel.MotorType.kBrushless);
+  private static DifferentialDrive _robot = new DifferentialDrive(_driveLF, _driveRF);
 
   /* Spark drives */
-  private static PWMVictorSPX upperIntake = new PWMVictorSPX(0);
-  private static PWMVictorSPX lowerIntake = new PWMVictorSPX(1);
+  private static PWMVictorSPX _upperIntake = new PWMVictorSPX(0);
+  private static PWMVictorSPX _lowerIntake = new PWMVictorSPX(1);
 
   /* Joysticks */
-  private static XboxController ctl1 = new XboxController(0);
-  private static XboxController ctl2 = new XboxController(1);
+  private static XboxController _ctl1 = new XboxController(0);
+  private static XboxController _ctl2 = new XboxController(1);
 
   /* Pneumatics */
-  private static AirCylinder intakeExtension = new AirCylinder(1, 0, 1, PneumaticsModuleType.CTREPCM);
-  private static AirCylinder rampLift = new AirCylinder(1, 3, 2, PneumaticsModuleType.CTREPCM);
-  private static AirCylinder armLatch = new AirCylinder(1, 4, 5, PneumaticsModuleType.CTREPCM);
+  private static AirCylinder _intakeExtension = new AirCylinder(1, 0, 1, PneumaticsModuleType.CTREPCM);
+  private static AirCylinder _rampLift = new AirCylinder(1, 3, 2, PneumaticsModuleType.CTREPCM);
+  private static AirCylinder _armLatch = new AirCylinder(1, 4, 5, PneumaticsModuleType.CTREPCM);
   boolean extendIntake = false;
 
   /* Delay Times */
@@ -68,9 +68,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
+    _chooser.setDefaultOption("Default Auto", kDefaultAuto);
+    _chooser.addOption("My Auto", kCustomAuto);
+    SmartDashboard.putData("Auto choices", _chooser);
 
     /* Init Static Classes */
     Lifts.Init();
@@ -82,12 +82,12 @@ public class Robot extends TimedRobot {
     CameraServer.startAutomaticCapture(1);
 
     /* Setup Drivetrain Followers */
-    driveRR.follow(driveRF);
-    driveLR.follow(driveLF);
+    _driveRR.follow(_driveRF);
+    _driveLR.follow(_driveLF);
 
     /* Set Pneumatic Start Positions */
-    rampLift.Extend(false);
-    intakeExtension.Extend(false);
+    _rampLift.Extend(false);
+    _intakeExtension.Extend(false);
   }
 
   /*
@@ -124,15 +124,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
+    _autoSelected = _chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+    System.out.println("Auto selected: " + _autoSelected);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
+    switch (_autoSelected) {
       case kCustomAuto:
         // Put custom auto code here
         break;
@@ -153,21 +153,21 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     /* Set Buttons */
-    boolean latch = ctl1.DpadUp() || ctl2.DpadUp();
-    boolean intakeExt = ctl1.ButtonB() || ctl2.ButtonB();
-    boolean intakeBalls = (ctl1.ButtonA() || ctl2.ButtonA()) && intakeExtension.IsExtended();
-    boolean ballSuckBack = (ctl1.ButtonA() || ctl2.ButtonA()) && !intakeExtension.IsExtended();
-    boolean raiseRamp = ctl1.ButtonY() || ctl2.ButtonY();
-    boolean shootHigh = ctl1.BumperLeft() || ctl2.BumperLeft();
-    boolean shootLow = ctl1.BumperRight() || ctl2.BumperRight();
-    boolean c1Down = (ctl1.ButtonX() && ctl1.LeftTrigger() > 0);
-    boolean c2Down = (ctl2.ButtonX() && ctl2.LeftTrigger() > 0);
-    boolean c1Ret = (ctl1.ButtonX() && ctl1.RightTrigger() > 0);
-    boolean c2Ret = (ctl2.ButtonX() && ctl2.RightTrigger() > 0);
-    boolean halfSpeed = ctl1.DpadRight() || ctl2.DpadRight();
+    boolean latch = _ctl1.DpadUp() || _ctl2.DpadUp();
+    boolean intakeExt = _ctl1.ButtonB() || _ctl2.ButtonB();
+    boolean intakeBalls = (_ctl1.ButtonA() || _ctl2.ButtonA()) && _intakeExtension.IsExtended();
+    boolean ballSuckBack = (_ctl1.ButtonA() || _ctl2.ButtonA()) && !_intakeExtension.IsExtended();
+    boolean raiseRamp = _ctl1.ButtonY() || _ctl2.ButtonY();
+    boolean shootHigh = _ctl1.BumperLeft() || _ctl2.BumperLeft();
+    boolean shootLow = _ctl1.BumperRight() || _ctl2.BumperRight();
+    boolean c1Down = _ctl1.ButtonX() && _ctl1.LeftTrigger() > 0;
+    boolean c2Down = _ctl2.ButtonX() && _ctl2.LeftTrigger() > 0;
+    boolean c1Ret = _ctl1.ButtonX() && _ctl1.RightTrigger() > 0;
+    boolean c2Ret = _ctl2.ButtonX() && _ctl2.RightTrigger() > 0;
+    boolean halfSpeed = _ctl1.DpadRight() || _ctl2.DpadRight();
 
     /* Arm Latch */
-    armLatch.Extend(latch);
+    _armLatch.Extend(latch);
 
     /* Intake */
     if (intakeExt) {
@@ -176,39 +176,39 @@ public class Robot extends TimedRobot {
         _intakeLastTime = System.currentTimeMillis();
       }
     }
-    intakeExtension.Extend(extendIntake);
+    _intakeExtension.Extend(extendIntake);
 
     /* Intake, Suckback & Shoot */
     if (intakeBalls) {
       /* Intake Balls */
-      rampLift.Extend(false);
-      upperIntake.set(-0.60);
-      lowerIntake.set(-0.50);
+      _rampLift.Extend(false);
+      _upperIntake.set(-0.60);
+      _lowerIntake.set(-0.50);
     } else if (ballSuckBack) {
       /* Ball Suckback */
-      rampLift.Extend(true);
-      upperIntake.set(-0.40);
+      _rampLift.Extend(true);
+      _upperIntake.set(-0.40);
     } else if (shootHigh) {
       /* Shoot High */
-      intakeExtension.Extend(false);
-      rampLift.Extend(raiseRamp);
-      upperIntake.set(0.15);
-      lowerIntake.set(-1.0);
+      _intakeExtension.Extend(false);
+      _rampLift.Extend(raiseRamp);
+      _upperIntake.set(0.15);
+      _lowerIntake.set(-1.0);
     } else if (shootLow) {
       /* Shoot Low */
-      intakeExtension.Extend(false);
-      rampLift.Extend(raiseRamp);
-      upperIntake.set(0.15);
-      lowerIntake.set(-0.60);
+      _intakeExtension.Extend(false);
+      _rampLift.Extend(raiseRamp);
+      _upperIntake.set(0.15);
+      _lowerIntake.set(-0.60);
     } else {
       /* At Rest */
-      rampLift.Extend(raiseRamp);
-      upperIntake.stopMotor();
-      lowerIntake.stopMotor();
+      _rampLift.Extend(raiseRamp);
+      _upperIntake.stopMotor();
+      _lowerIntake.stopMotor();
     }
 
     /* Lifts */
-    double liftSpeed = ctl1.LeftTrigger() + ctl2.LeftTrigger();
+    double liftSpeed = _ctl1.LeftTrigger() + _ctl2.LeftTrigger();
     if (liftSpeed > 0) {
       if (c1Down || c2Down)
         Lifts.RobotDown(liftSpeed);
@@ -219,7 +219,7 @@ public class Robot extends TimedRobot {
     }
 
     /* Arms */
-    double armSpeed = ctl1.RightTrigger() + ctl2.RightTrigger();
+    double armSpeed = _ctl1.RightTrigger() + _ctl2.RightTrigger();
     if (armSpeed > 0) {
       if (c1Ret || c2Ret)
         Arms.RobotDown(armSpeed);
@@ -230,11 +230,11 @@ public class Robot extends TimedRobot {
     }
 
     /* Arm Rotate */
-    double rotSpeed = ctl1.RightStickY() * ctl1.RightStickY();
-    rotSpeed = rotSpeed + ctl2.RightStickY() * ctl2.RightStickY();
-    if (ctl1.RightStickY() > 0.0 || ctl2.RightStickY() > 0.0) {
+    double rotSpeed = _ctl1.RightStickY() * _ctl1.RightStickY();
+    rotSpeed = rotSpeed + _ctl2.RightStickY() * _ctl2.RightStickY();
+    if (_ctl1.RightStickY() > 0.0 || _ctl2.RightStickY() > 0.0) {
       ArmRotate.RotateUp(rotSpeed);
-    } else if (ctl1.RightStickY() < 0.0 || ctl2.RightStickY() < 0.0) {
+    } else if (_ctl1.RightStickY() < 0.0 || _ctl2.RightStickY() < 0.0) {
       ArmRotate.RotateDown(rotSpeed);
     } else {
       ArmRotate.RotateStop();
@@ -244,11 +244,11 @@ public class Robot extends TimedRobot {
     double driveSpeed = 1.0;
     if (halfSpeed)
       driveSpeed = 0.5;
-    if (ctl1.LeftStickY() != 0 || ctl1.LeftStickX() != 0) {
-      robot.arcadeDrive(driveSpeed * ctl1.LeftStickX(), driveSpeed * -ctl1.LeftStickY());
+    if (_ctl1.LeftStickY() != 0 || _ctl1.LeftStickX() != 0) {
+      _robot.arcadeDrive(driveSpeed * _ctl1.LeftStickX(), driveSpeed * -_ctl1.LeftStickY());
     }
-    if (ctl2.LeftStickY() != 0 || ctl2.LeftStickX() != 0) {
-      robot.arcadeDrive(driveSpeed * ctl2.LeftStickX(), driveSpeed * -ctl2.LeftStickY());
+    if (_ctl2.LeftStickY() != 0 || _ctl2.LeftStickX() != 0) {
+      _robot.arcadeDrive(driveSpeed * _ctl2.LeftStickX(), driveSpeed * -_ctl2.LeftStickY());
     }
   }
 
