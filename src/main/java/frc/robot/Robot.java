@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -36,6 +37,7 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String _autoSelected;
   private final SendableChooser<String> _chooser = new SendableChooser<>();
+  private double startTime;
 
   /* Drivetrain drives */
   private static CANSparkMax _driveRF = new CANSparkMax(10, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -127,6 +129,10 @@ public class Robot extends TimedRobot {
     _autoSelected = _chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + _autoSelected);
+    x_time = System.currentTimeMillis();
+    y_time = Long.MAX_VALUE;
+    z_time = Long.MAX_VALUE;
+    backup_time = Long.MAX_VALUE;
   }
 
   /** This function is called periodically during autonomous. */
@@ -141,7 +147,16 @@ public class Robot extends TimedRobot {
         // Put default auto code here
         break;
     }
-  }
+
+    // Back up 1 second
+    if (x_time_done && y_time_done && z_time_done && !backup_time_done);
+   top_motor.set(0);
+   bottom-motor.set(0);
+robot.arcade.set(-0.6, 0.7);
+if(System.currentTimeMills() - backup_time > 2000) {
+  robot.arcadeDrive(0, 0);
+  backup_time_done = true;
+}
 
   /* This function is called once when teleop is enabled. */
   @Override
@@ -162,8 +177,8 @@ public class Robot extends TimedRobot {
     boolean shootLow = _ctl1.BumperRight() || _ctl2.BumperRight();
     boolean c1Down = _ctl1.ButtonX() && _ctl1.LeftTrigger() > 0;
     boolean c2Down = _ctl2.ButtonX() && _ctl2.LeftTrigger() > 0;
-    boolean c1Ret = _ctl1.ButtonX() && _ctl1.RightTrigger() > 0;
-    boolean c2Ret = _ctl2.ButtonX() && _ctl2.RightTrigger() > 0;
+    boolean c1Ret = _ctl1.DpadLeft() && _ctl1.RightTrigger() > 0;
+    boolean c2Ret = _ctl2.DpadLeft() && _ctl2.RightTrigger() > 0;
     boolean halfSpeed = _ctl1.DpadRight() || _ctl2.DpadRight();
 
     /* Arm Latch */
@@ -183,7 +198,7 @@ public class Robot extends TimedRobot {
       /* Intake Balls */
       _rampLift.Extend(false);
       _upperIntake.set(-1.0);
-      _lowerIntake.set(-0.5);
+      _lowerIntake.set(-0.55);
     } else if (ballSuckBack) {
       /* Ball Suckback */
       _rampLift.Extend(true);
@@ -192,7 +207,7 @@ public class Robot extends TimedRobot {
       /* Shoot High */
       _intakeExtension.Extend(false);
       _rampLift.Extend(raiseRamp);
-      _upperIntake.set(0.8);
+      _upperIntake.set(0.50);
       _lowerIntake.set(-1.0);
     } else if (shootLow) {
       /* Shoot Low */
