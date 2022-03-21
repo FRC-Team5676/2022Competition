@@ -33,12 +33,6 @@ import edu.wpi.first.cameraserver.CameraServer;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String _autoSelected;
-  private final SendableChooser<String> _chooser = new SendableChooser<>();
-  private double startTime;
-
   /* Drivetrain drives */
   private static CANSparkMax _driveRF = new CANSparkMax(10, CANSparkMaxLowLevel.MotorType.kBrushless);
   private static CANSparkMax _driveLF = new CANSparkMax(11, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -60,8 +54,14 @@ public class Robot extends TimedRobot {
   private static AirCylinder _armLatch = new AirCylinder(1, 4, 5, PneumaticsModuleType.CTREPCM);
   boolean extendIntake = false;
 
+  /* Auton Times */
+  private long _autonStartTime;
+  final long BackupTime = 1000;
+  final long RampLiftTime = 5000;
+  final long AutonFinishTime = 8000;
+
   /* Delay Times */
-  long _intakeLastTime;
+  private long _intakeLastTime;
 
   /*
    * This function is run when the robot is first started up and should be used
@@ -70,14 +70,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    _chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    _chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", _chooser);
-
     /* Init Static Classes */
     Lifts.Init();
     Arms.Init();
-    // ArmRotate.Init();
 
     /* Camera Setup */
     CameraServer.startAutomaticCapture(0);
@@ -125,39 +120,36 @@ public class Robot extends TimedRobot {
    * chooser code above as well.
    */
   @Override
-  public void autonomousInit() {
-    _autoSelected = _chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + _autoSelected);
-    x_time = System.currentTimeMillis();
-    y_time = Long.MAX_VALUE;
-    z_time = Long.MAX_VALUE;
-    backup_time = Long.MAX_VALUE;
+  public void autonomousInit()  {
+    _autonStartTime = System.currentTimeMillis();
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    switch (_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
+    if (System.currentTimeMillis() - _autonStartTime < BackupTime) {
+      _robot.arcadeDrive(0.0, -0.5);
+    } else {
+      _robot.arcadeDrive(0.0, 0.0);
     }
 
-    // Back up 1 second
-    if (x_time_done && y_time_done && z_time_done && !backup_time_done);
-   top_motor.set(0);
-   bottom-motor.set(0);
-robot.arcade.set(-0.6, 0.7);
-if(System.currentTimeMills() - backup_time > 2000) {
-  robot.arcadeDrive(0, 0);
-  backup_time_done = true;
-}
+    if (System.currentTimeMillis() - _autonStartTime > BackupTime &&
+        System.currentTimeMillis() - _autonStartTime < AutonFinishTime) {
+      _upperIntake.set(0.60);
+      _lowerIntake.set(-0.95);
+    } else {
+      _upperIntake.stopMotor();;
+      _lowerIntake.stopMotor();
+    }
 
+    if (System.currentTimeMillis() - _autonStartTime > RampLiftTime &&
+        System.currentTimeMillis() - _autonStartTime < AutonFinishTime) {
+      _rampLift.Extend(true);
+    } else {
+      _rampLift.Extend(false);
+    }
+  }
+ 
   /* This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
@@ -180,6 +172,7 @@ if(System.currentTimeMills() - backup_time > 2000) {
     boolean c1Ret = _ctl1.DpadLeft() && _ctl1.RightTrigger() > 0;
     boolean c2Ret = _ctl2.DpadLeft() && _ctl2.RightTrigger() > 0;
     boolean halfSpeed = _ctl1.DpadRight() || _ctl2.DpadRight();
+    boolean dumpBall = _ctl1.DpadDown() || _ctl2.DpadDown();
 
     /* Arm Latch */
     _armLatch.Extend(latch);
@@ -203,12 +196,16 @@ if(System.currentTimeMills() - backup_time > 2000) {
       /* Ball Suckback */
       _rampLift.Extend(true);
       _upperIntake.set(-1.0);
+    } else if (dumpBall) {
+      /* Dump Ball */
+      _upperIntake.stopMotor();
+      _lowerIntake.set(0.5);
     } else if (shootHigh) {
       /* Shoot High */
       _intakeExtension.Extend(false);
       _rampLift.Extend(raiseRamp);
-      _upperIntake.set(0.50);
-      _lowerIntake.set(-1.0);
+      _upperIntake.set(0.60);
+      _lowerIntake.set(-0.95);
     } else if (shootLow) {
       /* Shoot Low */
       _intakeExtension.Extend(false);
