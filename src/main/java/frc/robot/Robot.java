@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
 
     /* Set Pneumatic Start Positions */
     _rampLift.Extend(false);
-    _intakeExtension.Extend(false);
+    _intakeExtension.Extend(extendLatch);
   }
 
   /*
@@ -178,9 +178,9 @@ public class Robot extends TimedRobot {
 
     /* Arm Latch */
     if (latch) {
-      if (System.currentTimeMillis() - _latchLastTime > 500) {
+      if (System.currentTimeMillis() - _latchLastTime > 2000) {
         extendLatch = !extendLatch;
-        _intakeLastTime = System.currentTimeMillis();
+        _latchLastTime = System.currentTimeMillis();
       }
     }
     _armLatch.Extend(extendLatch);
@@ -188,7 +188,7 @@ public class Robot extends TimedRobot {
 
     /* Intake */
     if (intakeExt) {
-      if (System.currentTimeMillis() - _intakeLastTime > 250) {
+      if (System.currentTimeMillis() - _intakeLastTime > 500) {
         extendIntake = !extendIntake;
         _intakeLastTime = System.currentTimeMillis();
       }
