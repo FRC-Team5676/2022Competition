@@ -53,6 +53,7 @@ public class Robot extends TimedRobot {
   private static AirCylinder _rampLift = new AirCylinder(1, 3, 2, PneumaticsModuleType.CTREPCM);
   private static AirCylinder _armLatch = new AirCylinder(1, 4, 5, PneumaticsModuleType.CTREPCM);
   boolean extendIntake = false;
+  boolean extendLatch = false;
 
   /* Auton Times */
   private long _autonStartTime;
@@ -62,6 +63,7 @@ public class Robot extends TimedRobot {
 
   /* Delay Times */
   private long _intakeLastTime;
+  private long _latchLastTime;
 
   /*
    * This function is run when the robot is first started up and should be used
@@ -175,7 +177,14 @@ public class Robot extends TimedRobot {
     boolean dumpBall = _ctl1.DpadDown() || _ctl2.DpadDown();
 
     /* Arm Latch */
-    _armLatch.Extend(latch);
+    if (latch) {
+      if (System.currentTimeMillis() - _latchLastTime > 250) {
+        extendLatch = !extendLatch;
+        _intakeLastTime = System.currentTimeMillis();
+      }
+    }
+    _armLatch.Extend(extendLatch);
+    
 
     /* Intake */
     if (intakeExt) {
