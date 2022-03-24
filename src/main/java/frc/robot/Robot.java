@@ -178,7 +178,7 @@ public class Robot extends TimedRobot {
 
     /* Arm Latch */
     if (latch) {
-      if (System.currentTimeMillis() - _latchLastTime > 250) {
+      if (System.currentTimeMillis() - _latchLastTime > 500) {
         extendLatch = !extendLatch;
         _intakeLastTime = System.currentTimeMillis();
       }
