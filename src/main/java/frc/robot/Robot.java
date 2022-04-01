@@ -42,7 +42,8 @@ public class Robot extends TimedRobot {
 
   /* Spark drives */
   private static PWMVictorSPX _upperIntake = new PWMVictorSPX(0);
-  private static PWMVictorSPX _lowerIntake = new PWMVictorSPX(1);
+  private static PWMVictorSPX _lowerIntake1 = new PWMVictorSPX(1);
+  private static PWMVictorSPX _lowerIntake2 = new PWMVictorSPX(2);
 
   /* Joysticks */
   private static XboxController _ctl1 = new XboxController(0);
@@ -138,10 +139,12 @@ public class Robot extends TimedRobot {
     if (System.currentTimeMillis() - _autonStartTime > BackupTime &&
         System.currentTimeMillis() - _autonStartTime < AutonFinishTime) {
       _upperIntake.set(0.60);
-      _lowerIntake.set(-0.95);
+      _lowerIntake1.set(-0.95);
+      _lowerIntake2.set(-0.95);
     } else {
       _upperIntake.stopMotor();;
-      _lowerIntake.stopMotor();
+      _lowerIntake1.stopMotor();
+      _lowerIntake2.stopMotor();
     }
 
     if (System.currentTimeMillis() - _autonStartTime > RampLiftTime &&
@@ -200,7 +203,8 @@ public class Robot extends TimedRobot {
       /* Intake Balls */
       _rampLift.Extend(false);
       _upperIntake.set(-1.0);
-      _lowerIntake.set(-0.55);
+      _lowerIntake1.set(-0.55);
+      _lowerIntake2.set(-0.55);
     } else if (ballSuckBack) {
       /* Ball Suckback */
       _rampLift.Extend(true);
@@ -208,24 +212,28 @@ public class Robot extends TimedRobot {
     } else if (dumpBall) {
       /* Dump Ball */
       _upperIntake.stopMotor();
-      _lowerIntake.set(0.5);
+      _lowerIntake1.set(0.5);
+      _lowerIntake2.set(0.5);
     } else if (shootHigh) {
       /* Shoot High */
       _intakeExtension.Extend(false);
       _rampLift.Extend(raiseRamp);
       _upperIntake.set(0.60);
-      _lowerIntake.set(-0.95);
+      _lowerIntake1.set(-0.95);
+      _lowerIntake2.set(-0.95);
     } else if (shootLow) {
       /* Shoot Low */
       _intakeExtension.Extend(false);
       _rampLift.Extend(raiseRamp);
       _upperIntake.set(0.4);
-      _lowerIntake.set(-0.6);
+      _lowerIntake1.set(-0.6);
+      _lowerIntake2.set(-0.6);
     } else {
       /* At Rest */
       _rampLift.Extend(raiseRamp);
       _upperIntake.stopMotor();
-      _lowerIntake.stopMotor();
+      _lowerIntake1.stopMotor();
+      _lowerIntake2.stopMotor();
     }
 
     /* Lifts */
